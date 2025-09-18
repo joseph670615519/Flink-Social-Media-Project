@@ -29,7 +29,7 @@ const AddTweet = () => {
                 value={title} onChange={updateTitle}/>
                 <input type="text" name="message" placeholder="Message" 
                 value={message} onChange={updateMessage}/>
-                <button type="submit">Add Tweet</button>
+                <button type="submit" className='small-btn'>Add Tweet</button>
             </form>
         </div>
     )
