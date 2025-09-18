@@ -2,12 +2,19 @@ import React, {useContext} from 'react';
 import { TweetContext } from './TweetContext';
 
 const List = () => {
-    const [tweets, setTweets] = useContext(TweetContext);
+    const friends = [
+  { id: 1, name: "Friend 1" },
+  { id: 2, name: "Friend 2" },
+];
     return (
-        <div style={{ padding: '2rem', color: 'dark green' }}>
-            <h3>Friend template</h3>
-            <p>Number of friends</p>
-        </div>
+  <div className="list-container">
+    <h2>Friends</h2>
+    <ul>
+      {friends.map(friend => (
+        <li key={friend.id}>{friend.name}</li>
+      ))}
+    </ul>
+  </div>
     );
 }
 
