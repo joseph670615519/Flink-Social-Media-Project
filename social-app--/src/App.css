@@ -1,22 +1,23 @@
 #root {
-  max-width: 1280px;
+  max-width: 100vw;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
-.App {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  margin-left: 250px; 
-  margin-right: 250px;
+@media (max-width: 900px) {
+  .nav-container,
+  .list-container {
+    display: none;
+  }
+  .main-content {
+    margin: 0;
+    padding: 1rem;
+    width: 100vw;
+  }
+  .App {
+    flex-direction: column;
+  }
 }
 
 
