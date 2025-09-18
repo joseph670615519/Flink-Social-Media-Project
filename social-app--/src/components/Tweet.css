@@ -1,7 +1,7 @@
 .Tweet {
   text-align: center;
   border-radius: 10px;
-  border: 2px solid greenyellow;
+  border: 2px solid rgb(29, 101, 51);
   width: 500px;
   margin-bottom: 10px;
 }
