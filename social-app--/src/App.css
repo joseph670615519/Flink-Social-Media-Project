@@ -5,4 +5,28 @@
   text-align: center;
 }
 
+.App {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  margin-left: 250px; 
+}
+
+
+.nav-container { /*fixed the position of Nav*/
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 250px; 
+  background-color: #1a1a1a; 
+  padding: 1rem;
+  overflow-y: auto;
+}
 

@@ -10,14 +10,18 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <TweetProvider>
-    <div className="App">
-      <Nav />
-      <AddTweet />
-      <TweetList />
-      <Footer />
-    </div>
-  </TweetProvider>
+     <TweetProvider>
+      <div className="App">
+        <div className="nav-container">
+          <Nav />
+        </div>
+        <div className="main-content">
+          <AddTweet />
+          <TweetList />
+          <Footer />
+        </div>
+      </div>
+    </TweetProvider>
   )
 }
 
