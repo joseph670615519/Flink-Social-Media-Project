@@ -6,13 +6,24 @@ import Footer from './components/Footer.jsx'
 import { TweetProvider } from './components/TweetContext.jsx'
 import AddTweet from './components/AddTweet.jsx'
 import List from './components/List.jsx'
+import Search from './components/Search.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    console.log('Searching for:', term);
+  };
 
   return (
      <TweetProvider>
-      <div className="App">
+      <div className="App">   
+
+       <header className="fixed-header">
+          <Search onSearch={handleSearch} />
+        </header>
+
         <div className="nav-container">
           <Nav />
         </div>

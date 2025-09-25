@@ -1,31 +1,56 @@
 #root {
   max-width: 100vw;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0; 
   text-align: center;
 }
 
-@media (max-width: 900px) {
-  .nav-container,
-  .list-container {
-    display: none;
-  }
-  .main-content {
-    margin: 0;
-    padding: 1rem;
-    width: 100vw;
-  }
-  .App {
-    flex-direction: column;
-  }
+.App {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: #c1fbae;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 0 2rem;
+}
 
-.nav-container { /*fixed the position of Nav*/
+.fixed-header .search-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.fixed-header .search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.fixed-header .search-input:focus {
+  border-color: #86c76b;
+  box-shadow: 0 0 10px rgba(134, 199, 107, 0.3);
+}
+
+.nav-container {
   position: fixed;
   left: 0;
-  top: 0;
-  height: 100vh;
+  top: 80px; 
+  height: calc(100vh - 80px); 
   width: 350px; 
   background-color: #c1fbae; 
   padding: 2rem;
@@ -35,16 +60,44 @@
 .list-container {
   position: fixed;
   right: 0;
-  top: 0;
-  height: 100vh;
+  top: 80px; 
+  height: calc(100vh - 80px); 
   width: 350px; 
   background-color: #c1fbae; 
   padding: 2rem;
   overflow-y: auto;
 }
 
-.small-btn {
-  font-size: 0.8em;
-  padding: 0.4em 0.8em;
-}
+.main-content {
+  margin-left: 350px;
+  margin-right: 350px;
+  padding: 2rem;
+  flex: 1;
+  margin-top: 80px; 
+  min-height: calc(100vh - 80px);
 
+/* For mobile */
+@media (max-width: 900px) {
+  .nav-container,
+  .list-container {
+    display: none;
+  }
+  
+  .fixed-header {
+    position: relative;
+    height: 70px;
+    padding: 0 1rem;
+  }
+  
+  .main-content {
+    margin: 0;
+    padding: 1rem;
+    width: 100%;
+    margin-top: 0;
+  }
+  
+  .App {
+    flex-direction: column;
+   } 
+  } 
+}
