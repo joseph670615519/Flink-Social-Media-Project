@@ -1,11 +1,19 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { TweetContext } from './TweetContext';
+import avatarImg from '../assets/FlinkAva_.png';
 
 const Nav = () => {
-    const [tweets, setTweets] = useContext(TweetContext);
+    const [tweets] = useContext(TweetContext);
     return (
-        <div style={{ padding: '2rem', color: 'dark green' }}>
-            <h3>Profile: Unknown</h3>
+        <div className="nav-container">
+            <div className="profile-section">
+                <img
+                    src={avatarImg}
+                    alt="Profile"
+                    className="avatar"
+                />
+                <h3>Profile: Unknown</h3>
+            </div>
             <p>Number of tweets: {tweets.length}</p>
         </div>
     );
