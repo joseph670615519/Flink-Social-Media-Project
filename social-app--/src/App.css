@@ -61,7 +61,7 @@
   text-align: left;
   position: fixed;
   left: 0;
-  top: 80px;
+  top: 50px;
   height: calc(100vh - 80px);
   overflow-y: auto;
   padding: 1.5rem;
@@ -126,7 +126,7 @@
   text-align: left;
   position: fixed;
   right: 0;
-  top: 80px;
+  top: 50px;
   height: calc(100vh - 80px);
   overflow-y: auto;
 }
