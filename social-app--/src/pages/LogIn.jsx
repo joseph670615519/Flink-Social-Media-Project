@@ -7,6 +7,12 @@ function LogIn() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if(!username.trim() || !password.trim()) {
+            alert('Please fill username and password');
+            return;
+        }
+
         console.log('Logging in with:', { username, password });
     }
 
@@ -18,12 +24,12 @@ function LogIn() {
 
                 <div className='login-input'>
                     <label>Username: </label>
-                    <input id='login-username' type="text" placeholder="Username" required />
+                    <input id='login-username' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
                 </div>
 
                 <div className='login-input'>
                     <label>Password: </label>
-                    <input id='login-pw' type="password" placeholder="Password" required />
+                    <input id='login-pw' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
 
                 <button type='submit' className='login-btn'>Log In</button>
