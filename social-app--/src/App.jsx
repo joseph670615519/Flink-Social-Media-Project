@@ -10,6 +10,7 @@ import AddTweet from './components/AddTweet.jsx'
 import List from './components/List.jsx'
 import Search from './components/Search.jsx'
 import LogIn from './pages/LogIn.jsx'
+import Register from './pages/Register.jsx'
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,6 +25,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LogIn />} />
+
+            <Route path="/register" element={<Register />} />
 
             <Route path="/feed" 
             element = {
