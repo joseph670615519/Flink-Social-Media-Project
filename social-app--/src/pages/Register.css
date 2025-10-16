@@ -1,8 +1,8 @@
 .sign-up{
     border: 1px solid black;
     border-radius: 10px;
-    width: 400px;
-    height: 366px;
+    width: 370px;
+    height: 370px;
     margin: auto;
     margin-top: 70px;
     padding: 20px;  
@@ -10,64 +10,51 @@
 
 h2{
     text-align: center;
+    margin-top: 2px;
 }
 
 label{
     font-size: 13px;
 }
 
-.name-row{
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.name-group{
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-#fname{
-    height: 15px;
-    font-size: 12px;
-    padding: 5px;
-    width: 180px;
-}
-
-#lname{
-    height: 15px;
-    font-size: 12px;
-    padding: 5px;
-    width: 180px;
-}
-
-.form-group{
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+input{
+    border-radius: 5px;
+    border: 1px solid gray;
     margin-top: 5px;
 }
 
-#DoB{
-    height: 15px;
+#register-username{
+    height: 20px;
     font-size: 12px;
     padding: 5px;
-    width: 388px;
+    width: 350px;
+}
+
+.form-group{
+    margin-top: 3px;
+    text-align: left;
+    margin-left: 8px;
+}
+
+#DoB{
+    height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    width: 350px;
 }
 
 #email{
-    height: 15px;
+    height: 20px;
     font-size: 12px;
     padding: 5px;
-    width: 388px;
+    width: 350px;
 }
 
 #pw{
-    height: 15px;
+    height: 20px;
     font-size: 12px;
     padding: 5px;
-    width: 388px;
+    width: 350px;
 }
 
 button{
@@ -77,7 +64,7 @@ button{
     font-size: 13px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 p{
