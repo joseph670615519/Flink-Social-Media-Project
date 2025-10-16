@@ -30,7 +30,7 @@ function Search({ onSearch }) {
                         top: '50%',
                         transform: 'translateY(-50%)',
                         color: '#86c76b',
-                        pointerEvents: 'none'
+                        pointerEvents: 'none',
                     }}
                 >
                     🤔

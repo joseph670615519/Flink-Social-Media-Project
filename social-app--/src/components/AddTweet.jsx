@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { TweetContext } from './TweetContext';
+import './AddTweet.css';
 
 const AddTweet = () => {
     const [title, setTitle] = useState('');
@@ -26,6 +27,7 @@ const AddTweet = () => {
                 <input
                     type="text"
                     name="title"
+                    id="add-title"
                     placeholder="Add Title"
                     value={title}
                     onChange={updateTitle}
@@ -33,13 +35,14 @@ const AddTweet = () => {
                 />
                 <textarea
                     name="message"
+                    id= "add-message"
                     placeholder="Type what you have in mind!"
                     value={message}
                     onChange={updateMessage}
                     className="tweet-message-input"
                     rows={3}
                 />
-                <button type="submit" className="small-btn">Post</button>
+                <button type="submit" className="post-btn">Post</button>
             </form>
         </div>
     );
