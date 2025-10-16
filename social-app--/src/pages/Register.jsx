@@ -61,7 +61,7 @@ function Register () {
                     <input id='pw' type="password" placeholder="Password" value={pw} onChange={(e) => setPw(e.target.value)} required />
             </div>
 
-            <button type="submit">Register</button>
+            <button id='register-btn' type="submit">Register</button>
            
         </form>
 
