@@ -1,6 +1,7 @@
 .login-page{
     border: 1px solid black;
     width: 300px;
+    height: 280px;
     padding: 40px;
     position: absolute;
     top: 50%;
@@ -15,18 +16,48 @@
     height: 230px;
 }
 
+h2{
+    font-size: 22px;
+}
+
 .login-input{
     /* border: 1px solid black; */
     height: 50px;
+    margin-top: 20px;
+}
+
+label{
+    font-size: 14px;
+    float: left;
+}
+
+#login-username{
+    height: 20px;
+    width: 100%;
+    font-size: 13px;
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+#login-pw{
+    height: 20px;
+    width: 100%;
+    font-size: 13px;
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid gray;
+    border-radius: 5px;
 }
 
 .login-btn{
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 .create-account{
     cursor: pointer;
     font-size: 12px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 

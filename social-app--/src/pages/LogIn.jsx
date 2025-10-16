@@ -18,25 +18,17 @@ function LogIn() {
 
                 <div className='login-input'>
                     <label>Username: </label>
-                        <input
-                            type='text'
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
+                    <input id='login-username' type="text" placeholder="Username" required />
                 </div>
 
                 <div className='login-input'>
                     <label>Password: </label>
-                    <input
-                        type='password'
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <input id='login-pw' type="password" placeholder="Password" required />
                 </div>
 
                 <button type='submit' className='login-btn'>Log In</button>
 
-                <div className='create-account'>Create an account</div>
+                <div className='create-account'><a href='/register'>Create an account</a></div>
 
             </form>
         </div>
