@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { TweetContext } from './TweetContext';
+import { auth } from '../firebase'; 
 
 const AddTweet = () => {
     const [title, setTitle] = useState('');
@@ -11,17 +12,26 @@ const AddTweet = () => {
 
     const addTweet = (e) => {
         e.preventDefault();
-        const newTweet = { title, message, likes: 0, id: tweets.length };
-        setTweets(prevTweets => [...prevTweets, newTweet]);
-        localStorage.setItem('tweets', JSON.stringify([...tweets, newTweet]));
+        const currentUserId = auth.currentUser?.uid || 'current-user';
+
+         const newTweet = { 
+            title, 
+            message, 
+            likes: 0, 
+            id: Date.now(),
+            userId: currentUserId,
+            date: new Date().toLocaleDateString()
+        };
+        
+        const updatedTweets = [...tweets, newTweet];
+        setTweets(updatedTweets);
+        
         setTitle('');
         setMessage('');
     };
 
     return (
         <div className="add-tweet-card">
-            {/* Optional: Add a user avatar */}
-            {/* <img src="/avatar.png" alt="User" className="avatar" /> */}
             <form onSubmit={addTweet}>
                 <input
                     type="text"
@@ -30,6 +40,7 @@ const AddTweet = () => {
                     value={title}
                     onChange={updateTitle}
                     className="tweet-title-input"
+                    required
                 />
                 <textarea
                     name="message"
@@ -38,6 +49,7 @@ const AddTweet = () => {
                     onChange={updateMessage}
                     className="tweet-message-input"
                     rows={3}
+                    required
                 />
                 <button type="submit" className="small-btn">Post</button>
             </form>

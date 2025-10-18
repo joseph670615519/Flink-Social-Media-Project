@@ -5,4 +5,76 @@
   margin-bottom: 1.5rem;
   padding: 1rem 1.5rem;
   text-align: left;
+  border: 1px solid #e0e0e0;
+}
+
+.tweet-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tweet-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #c1fbae;
+}
+
+.tweet-user-info {
+  flex: 1;
+  text-align: left;
+}
+
+.tweet-user-info strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tweet-date {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.tweet-content h3 {
+  margin: 8px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.tweet-content p {
+  margin: 8px 0;
+  color: #555;
+  line-height: 1.4;
+}
+
+.tweet-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.like-btn, .comment-btn, .share-btn {
+  background: none;
+  border: none;
+  color: #65676b;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.like-btn:hover, .comment-btn:hover, .share-btn:hover {
+  background: #f0f2f5;
+}
+
+.like-btn.liked {
+  color: #f91880;
 }
