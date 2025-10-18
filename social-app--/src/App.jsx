@@ -13,7 +13,6 @@ function App() {
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    console.log('Searching for:', term);
   };
 
   return (
