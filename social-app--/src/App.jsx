@@ -11,6 +11,9 @@ import AddTweet from './components/AddTweet.jsx';
 import List from './components/List.jsx';
 import Search from './components/Search.jsx';
 
+import Register from './pages/Register.jsx';
+import LogIn from './pages/LogIn.jsx';
+
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import MainFeed from './components/MainFeed.jsx';
@@ -32,6 +35,8 @@ function App() {
    return (
     <TweetProvider>
       <BrowserRouter>
+        
+        {/* header */}
         <header className="fixed-header">
           <Search onSearch={handleSearch} />
         </header>
@@ -54,6 +59,7 @@ function App() {
                     <Footer />
                   </>
                 } />
+
                 <Route path="/me" element={<Profile user={user} />} />
                 <Route path="/profile/:userId" element={<UserProfile />} />
               </Routes>
