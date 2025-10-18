@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import './Register.css'
 
 function Register () {
@@ -65,7 +65,7 @@ function Register () {
            
         </form>
 
-        <p>Already have an account? <a href="/"><br></br>Log-in</a></p>
+        <p>Already have an account? <a href="/login"><br></br>Log-in</a></p>
     </div>
   )
 }
