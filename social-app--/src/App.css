@@ -223,9 +223,9 @@ button:focus-visible {
 
 /* Main Content */
 .main-content {
-  margin-left: 350px;
+  margin-left: 300px;
   margin-right: 350px;
-  padding: 2rem;
+  padding: 32px;
   flex: 1;
   margin-top: 80px; 
   min-height: calc(100vh - 80px);
