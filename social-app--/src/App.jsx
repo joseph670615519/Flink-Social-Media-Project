@@ -13,7 +13,6 @@ import Search from './components/Search.jsx';
 
 import Register from './pages/Register.jsx';
 import LogIn from './pages/LogIn.jsx';
-import Layout from './pages/Layout.jsx';
 
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
@@ -36,7 +35,7 @@ function App() {
    return (
     <TweetProvider>
       <BrowserRouter>
-
+        
         {/* header */}
         <header className="fixed-header">
           <Search onSearch={handleSearch} />
@@ -52,7 +51,6 @@ function App() {
           <main className="main-content">
             <Suspense fallback={<div className="loading">Loading...</div>}>
               <Routes>
-
                 <Route path="/" element={
                   <>
                     <AddTweet user={user} />
