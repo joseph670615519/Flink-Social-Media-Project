@@ -2,11 +2,44 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { TweetContext } from './TweetContext';
 import avatarImg from '../assets/FlinkAva.png';
+import { auth } from "../firebase";
+import { sendFriendRequest, acceptFriendRequest, removeFriend, getFriendStatus } from "./Friends";
 
 export default function UserProfile() {
   const { userId } = useParams();
   const [tweets = []] = useContext(TweetContext) || [];
   const [userData, setUserData] = useState(null);
+  // Friend system state + functions
+const [status, setStatus] = useState("none");
+
+useEffect(() => {
+  let current = auth.currentUser?.uid || "testUser123"; // support fake user
+  getFriendStatus(current, userId).then(setStatus);
+}, [userId]);
+
+const handleFriendAction = async () => {
+  console.log("current:", auth.currentUser?.uid, "target:", userId, "status:", status);
+
+// 🔧 Local testing override — fake logged-in user ID
+let current = auth.currentUser?.uid;
+if (!current) {
+  current = "testUser123"; // pretend you’re logged in
+  console.log("⚠️ Using fake user for local testing:", current);
+}
+
+  if (status === "none") {
+    await sendFriendRequest(current, userId);
+    setStatus("sent");
+  } else if (status === "received") {
+    await acceptFriendRequest(current, userId);
+    setStatus("friends");
+  } else {
+    await removeFriend(current, userId);
+    setStatus("none");
+  }
+
+};
+
 
   useEffect(() => {
     // Fetch user data from your state management or Firebase
@@ -86,7 +119,17 @@ export default function UserProfile() {
             <p className="profile-bio">{userData.bio || 'No bio available.'}</p>
           </div>
           <div className="profile-actions">
-            <button className="small-btn">Add Friend</button>
+            
+            <button className="small-btn" onClick={handleFriendAction}>
+            {status === "friends"
+            ? "Unfriend"
+            : status === "sent"
+            ? "Request Sent"
+            : status === "received"
+            ? "Accept Request"
+            : "Add Friend"}
+            </button>
+
             <button className="small-btn" style={{ marginLeft: '0.5rem' }}>Message</button>
           </div>
         </div>

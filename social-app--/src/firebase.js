@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -18,3 +18,22 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export default app;
+
+export async function ensureUserDoc() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const ref = doc(db, "users", user.uid);
+  await setDoc(
+    ref,
+    {
+      uid: user.uid,
+      email: user.email || "",
+      displayName: user.displayName || "Anonymous",
+      friends: [],
+      requestsSent: [],
+      requestsReceived: []
+    },
+    { merge: true }
+  );
+}

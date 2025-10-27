@@ -2,6 +2,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
+import { ensureUserDoc } from './firebase';
 import './App.css';
 import TweetList from './components/TweetList.jsx';
 import Nav from './components/Nav.jsx';
@@ -20,12 +21,17 @@ import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import MainFeed from './components/MainFeed.jsx';
 
+
+
 function App() {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, u => setUser(u));
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+      if (u) await ensureUserDoc();
+    });
     return () => unsub();
   }, []);
 
