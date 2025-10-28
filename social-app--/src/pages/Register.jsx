@@ -1,38 +1,64 @@
 import React, { useState} from 'react'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import './Register.css'
 
 function Register () {
-    const [Username, setUsername] = React.useState('');
-    const [DoB, setDoB] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [pw, setPw] = React.useState('');
+    const [displayName, setDisplayName] = useState('');
+    const [DoB, setDoB] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        //username
+        // Validation (keep your existing validation)
         const usernameRegex = /^[a-zA-Z0-9_]{5,}$/;
-        if(!usernameRegex.test(Username)){
+        if(!usernameRegex.test(displayName)){
             alert('Username must be at least 5 characters and can include letters, numbers, _ or -');
             return;
         }
 
-        //email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
             alert('Invalid email address.');
             return;
         }
 
-        //password
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-        if(!passwordRegex.test(pw)){
+        if(!passwordRegex.test(password)){
             alert('Password must be at least 8 characters, include uppercase, lowercase, number, and special character.');
             return;
         }
 
-        alert('Registration successful!');
-        console.log('Registering with:', { Username, DoB, email, pw });
+        try {
+      
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await updateProfile(user, {
+                displayName: displayName
+            });
+
+            await setDoc(doc(db, 'users', user.uid), {
+                displayName: displayName,
+                email: email,
+                dateOfBirth: DoB,
+                createdAt: new Date().toISOString(),
+                friends: [],
+                friendRequests: []
+            });
+
+            alert('Registration successful!');
+            console.log('Registered successfully:', user);
+            navigate('/feed'); 
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('Registration failed: ' + error.message);
+        }
     };
 
   return (
@@ -42,10 +68,9 @@ function Register () {
 
             <div className='form-group'>
                 <label>Username: </label>
-                    <input id='register-username' type="text" placeholder="Username" value={Username} onChange={(e) => setUsername(e.target.value)} required/>
+                    <input id='register-username' type="text" placeholder="Username" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required/>
             </div>
     
-
             <div className='form-group'>
                 <label>Date of Birth: </label>
                     <input id='DoB' type="date" placeholder="Date of Birth" value={DoB} onChange={(e) => setDoB(e.target.value)} required />
@@ -58,7 +83,7 @@ function Register () {
 
             <div className='form-group'>
                 <label>New password: </label>
-                    <input id='pw' type="password" placeholder="Password" value={pw} onChange={(e) => setPw(e.target.value)} required />
+                    <input id='pw' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
 
             <button id='register-btn' type="submit">Register</button>

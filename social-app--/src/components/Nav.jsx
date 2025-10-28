@@ -7,8 +7,7 @@ const Nav = ({ user }) => {
   const [tweets] = useContext(TweetContext);
 
   return (
-    <div className="nav-container">
-      {/* make the profile clickable and navigate to /me */}
+    <div className="nav-container"> 
       <Link to="/me" className="profile-section" style={{ textDecoration: 'none', color: 'inherit' }}>
         <img src={user?.photoURL || avatarImg} alt="Profile" className="avatar" />
         <h3>{user?.displayName || (user ? user.email : 'Profile')}</h3>

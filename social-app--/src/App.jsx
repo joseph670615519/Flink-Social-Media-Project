@@ -1,71 +1,133 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import './App.css';
-import TweetList from './components/TweetList.jsx';
+
+import { TweetProvider } from './components/TweetContext.jsx';
+
+import LogIn from './pages/LogIn.jsx';
+import Register from './pages/Register.jsx';
+
 import Nav from './components/Nav.jsx';
 import Footer from './components/Footer.jsx';
-import { TweetProvider } from './components/TweetContext.jsx';
 import AddTweet from './components/AddTweet.jsx';
+import MainFeed from './components/MainFeed.jsx';
 import List from './components/List.jsx';
 import Search from './components/Search.jsx';
-
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
-import MainFeed from './components/MainFeed.jsx';
+import Notification from './components/Notification.jsx';
 
 function App() {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, u => setUser(u));
-    return () => unsub();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    console.log('Searching for:', term);
   };
 
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Loading Flink...
+      </div>
+    );
+  }
+
   return (
-     <TweetProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LogIn />} />
+    <TweetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route 
+            path="/login" 
+            element={!user ? <LogIn /> : <Navigate to="/feed" replace />} 
+          />
+          <Route 
+            path="/register" 
+            element={!user ? <Register /> : <Navigate to="/feed" replace />} 
+          />
+          
+          <Route 
+            path="/feed" 
+            element={
+              user ? (
+                <div className="app-layout">
+                 
+                  <header className="app-header">
+                    <div className="header-content">
+                      <div className="header-left">
+                        <h1 className="app-logo">Flink</h1>
+                      </div>
+                      
+                      <div className="header-center">
+                        <Search onSearch={handleSearch} />
+                      </div>
+                      
+                      <div className="header-right">
+                        <Notification />
+                      </div>
+                    </div>
+                  </header>
 
-            <Route path="/register" element={<Register />} />
+                  {/* Main Layout Container */}
+                  <div className="layout-container">
+                    
+                    <aside className="sidebar left-sidebar">
+                      <Nav user={user} />
+                    </aside>
 
-            <Route path="/feed" 
-            element = {
-              <div className="App">   
-
-                <header className="fixed-header">
-                  <Search onSearch={handleSearch} />
-                </header>
-
-                <div className="nav-container">
-                  <Nav />
+                    <main className="main-feed-container">
+                      <AddTweet user={user} />
+                      <MainFeed user={user} searchTerm={searchTerm} />
+                      <Footer />
+                    </main>
+          
+                    <aside className="sidebar right-sidebar">
+                      <List user={user} />
+                    </aside>
+                  </div>
                 </div>
-
-                <div className="list-container">
-                  <List />
-                </div>
-
-                <div className="main-content">
-                  <AddTweet />
-                  <TweetList />
-                  <Footer />
-                </div>
-              
-              </div>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </TweetProvider>
-  )
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            } 
+          />
+          
+          <Route 
+            path="/me" 
+            element={user ? <Profile user={user} /> : <Navigate to="/login" replace />} 
+          />
+          
+          <Route 
+            path="/profile/:userId" 
+            element={user ? <UserProfile /> : <Navigate to="/login" replace />} 
+          />
+          
+          <Route 
+            path="/" 
+            element={<Navigate to={user ? "/feed" : "/login"} replace />} 
+          />
+        </Routes>
+      </BrowserRouter>
+    </TweetProvider>
+  );
 }
 
 export default App;

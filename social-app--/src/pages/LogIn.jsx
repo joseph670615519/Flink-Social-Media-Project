@@ -1,19 +1,30 @@
 import React, {useState} from 'react'
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 import './Login.css'
 
 function LogIn() {
-    const[username, setUsername] = useState('');
+    const[email, setEmail] = useState('');
     const[password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!username.trim() || !password.trim()) {
-            alert('Please fill username and password');
+        if(!email.trim() || !password.trim()) {
+            alert('Please fill email and password');
             return;
         }
 
-        console.log('Logging in with:', { username, password });
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Logged in successfully:', userCredential.user);
+            navigate('/feed'); 
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed: ' + error.message);
+        }
     }
 
   return (
@@ -23,8 +34,8 @@ function LogIn() {
             <form onSubmit={handleSubmit}>
 
                 <div className='login-input'>
-                    <label>Username: </label>
-                    <input id='login-username' type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    <label>Email: </label>
+                    <input id='login-username' type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
 
                 <div className='login-input'>

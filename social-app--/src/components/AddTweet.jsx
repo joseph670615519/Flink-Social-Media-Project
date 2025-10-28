@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { TweetContext } from './TweetContext';
+import { auth } from '../firebase'; // Fixed import path
 
 const AddTweet = () => {
     const [title, setTitle] = useState('');
@@ -11,14 +12,21 @@ const AddTweet = () => {
 
     const addTweet = (e) => {
         e.preventDefault();
-        const currentUserId = auth.currentUser?.uid || 'current-user';
+        const currentUser = auth.currentUser; // Now this should work
+        
+        if (!currentUser) {
+            alert('You must be logged in to post!');
+            return;
+        }
 
-         const newTweet = { 
+        const newTweet = { 
             title, 
             message, 
             likes: 0, 
             id: Date.now(),
-            userId: currentUserId,
+            userId: currentUser.uid,
+            userName: currentUser.displayName || currentUser.email,
+            userAvatar: currentUser.photoURL,
             date: new Date().toLocaleDateString()
         };
         
@@ -44,7 +52,7 @@ const AddTweet = () => {
                 />
                 <textarea
                     name="message"
-                    id= "add-message"
+                    id="add-message"
                     placeholder="Type what you have in mind!"
                     value={message}
                     onChange={updateMessage}

@@ -20,6 +20,8 @@ const MainFeed = ({ user, searchTerm }) => {
           likes={tweet.likes}
           userId={tweet.userId}
           date={tweet.date}
+          userName={tweet.userName}
+          avatar={tweet.userAvatar}
         />
       ))}
     </div>

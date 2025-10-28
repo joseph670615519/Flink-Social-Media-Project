@@ -9,85 +9,58 @@ export default function UserProfile() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    // Fetch user data from your state management or Firebase
-    // For demo, we'll use in-memory data
-    const storedUsers = [
-      {
-        id: 'user1',
-        displayName: 'Alice Johnson',
-        email: 'alice@example.com',
-        photoURL: avatarImg,
-        bio: 'Love sharing my thoughts and connecting with friends! 🌟',
-        friendsCount: 156,
-        postsCount: 42,
-        likesCount: 523
-      },
-      {
-        id: 'user2',
-        displayName: 'Bob Smith',
-        email: 'bob@example.com',
-        photoURL: avatarImg,
-        bio: 'Tech enthusiast | Coffee lover ☕ | Always learning',
-        friendsCount: 89,
-        postsCount: 28,
-        likesCount: 312
-      },
-      {
-        id: 'user3',
-        displayName: 'Carol Williams',
-        email: 'carol@example.com',
-        photoURL: avatarImg,
-        bio: 'Artist & Designer | Creating beautiful things every day 🎨',
-        friendsCount: 234,
-        postsCount: 67,
-        likesCount: 891
-      }
-    ];
+   
+    const user = {
+      id: userId,
+      displayName: `User ${userId?.substring(0, 8)}` || 'User',
+      email: `${userId}@example.com` || '',
+      photoURL: avatarImg,
+      bio: 'This user prefers to keep an air of mystery about them.',
+      joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    };
     
-    const user = storedUsers.find(u => u.id === userId);
-    
-    if (user) {
-      setUserData(user);
-    } else {
-      // Fallback for demo purposes
-      setUserData({
-        id: userId,
-        displayName: `User ${userId}`,
-        email: `${userId}@example.com`,
-        photoURL: avatarImg,
-        bio: 'This user hasn\'t set up their bio yet.',
-        friendsCount: Math.floor(Math.random() * 100),
-        postsCount: 0,
-        likesCount: 0
-      });
-    }
+    setUserData(user);
   }, [userId]);
 
   if (!userData) {
     return <div className="main-content">Loading profile...</div>;
   }
 
-  // Filter tweets by this user
   const userTweets = tweets.filter(t => t.userId === userId);
+  const friendsCount = 0; 
 
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <div className="profile-cover" />
-        <div className="profile-meta">
+        {/* Simple cover for other users */}
+        <div className="cover-photo-container" style={{ 
+          background: 'linear-gradient(135deg, #86c76b, #6bbf4e)',
+          height: '200px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '1.2rem'
+        }}>
+          <span>{userData.displayName}'s Profile</span>
+        </div>
+        
+        <div className="profile-info-section">
           <img 
             src={userData.photoURL || avatarImg} 
             alt={userData.displayName} 
-            className="profile-avatar-large" 
+            className="profile-picture" 
           />
-          <div className="profile-info">
+          <div className="profile-details">
             <h1>{userData.displayName}</h1>
             {userData.email && <p className="profile-email">{userData.email}</p>}
-            <p className="profile-bio">{userData.bio || 'No bio available.'}</p>
-          </div>
-          <div className="profile-actions">
-            <button className="small-btn">Add Friend</button>
-            <button className="small-btn" style={{ marginLeft: '0.5rem' }}>Message</button>
+            <p className="profile-bio" style={{ marginBottom: '1rem', color: '#666' }}>
+              {userData.bio}
+            </p>
+            <div className="profile-actions">
+              <button className="primary-btn">Add Friend</button>
+              <button className="secondary-btn">Message</button>
+            </div>
           </div>
         </div>
 
@@ -97,50 +70,52 @@ export default function UserProfile() {
             <span>Posts</span>
           </div>
           <div className="stat">
-            <strong>{userData.friendsCount || 0}</strong>
+            <strong>{friendsCount}</strong>
             <span>Friends</span>
           </div>
           <div className="stat">
-            <strong>{userData.likesCount || 0}</strong>
-            <span>Likes</span>
+            <strong>0</strong>
+            <span>Photos</span>
           </div>
         </div>
       </div>
 
       <section className="profile-posts">
-        <h2>{userData.displayName}'s posts</h2>
-        {userTweets.length === 0 && (
-          <p style={{ color: '#666' }}>
-            {userData.displayName} hasn't posted anything yet.
-          </p>
-        )}
-        {userTweets.map(t => (
-          <div key={t.id} className="profile-post-card">
-            <div className="post-header">
-              <img 
-                src={userData.photoURL || avatarImg} 
-                alt={userData.displayName} 
-                className="post-avatar" 
-              />
-              <div>
-                <strong>{userData.displayName}</strong>
-                <div className="post-meta" style={{ fontSize: '0.85rem', color: '#666' }}>
-                  {t.date || 'Just now'}
+        <h2>{userData.displayName}'s Posts</h2>
+        {userTweets.length === 0 ? (
+          <div className="empty-state">
+            <h3>No posts yet</h3>
+            <p>{userData.displayName} hasn't posted anything yet.</p>
+          </div>
+        ) : (
+          userTweets.map(t => (
+            <div key={t.id} className="profile-post-card">
+              <div className="post-header">
+                <img 
+                  src={userData.photoURL || avatarImg} 
+                  alt={userData.displayName} 
+                  className="post-avatar" 
+                />
+                <div>
+                  <strong>{userData.displayName}</strong>
+                  <div className="post-meta" style={{ fontSize: '0.85rem', color: '#666' }}>
+                    {t.date || 'Just now'}
+                  </div>
                 </div>
               </div>
+              <h3 style={{ margin: '8px 0' }}>{t.title}</h3>
+              <p>{t.message}</p>
+              <div style={{ marginTop: '0.75rem', color: '#666', fontSize: '0.9rem' }}>
+                ❤️ {t.likes || 0} likes
+              </div>
             </div>
-            <h3 style={{ margin: '8px 0' }}>{t.title}</h3>
-            <p>{t.message}</p>
-            <div style={{ marginTop: '0.75rem', color: '#666', fontSize: '0.9rem' }}>
-              ❤️ {t.likes || 0} likes
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </section>
 
       <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-        <Link to="/" style={{ color: '#86c76b', textDecoration: 'none' }}>
-          ← Back to Home
+        <Link to="/feed" style={{ color: '#86c76b', textDecoration: 'none' }}>
+          ← Back to Feed
         </Link>
       </div>
     </div>
