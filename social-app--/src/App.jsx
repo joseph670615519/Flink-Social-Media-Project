@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import './App.css';
@@ -19,10 +19,42 @@ import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import Notification from './components/Notification.jsx';
 
+function Logo({ onRefresh }) {
+  const navigate = useNavigate();
+  
+  const handleLogoClick = () => {
+    if (window.location.pathname === '/feed') {
+      onRefresh(); 
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/feed');
+    }
+  };
+
+  return (
+    <div 
+      className="app-logo-clickable"
+      onClick={handleLogoClick}
+      style={{ cursor: 'pointer' }}
+      aria-label="Go to feed"
+      role="button"
+      tabIndex={0}
+      onKeyPress={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleLogoClick();
+        }
+      }}
+    >
+      <h1 className="app-logo">Flink</h1>
+    </div>
+  );
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -35,6 +67,11 @@ function App() {
 
   const handleSearch = (term) => {
     setSearchTerm(term);
+  };
+
+  const handleRefreshFeed = () => {
+    setRefreshKey(prev => prev + 1);
+    console.log('Refreshing feed...');
   };
 
   if (loading) {
@@ -69,11 +106,11 @@ function App() {
             element={
               user ? (
                 <div className="app-layout">
-                 
+               
                   <header className="app-header">
                     <div className="header-content">
                       <div className="header-left">
-                        <h1 className="app-logo">Flink</h1>
+                        <Logo onRefresh={handleRefreshFeed} /> 
                       </div>
                       
                       <div className="header-center">
@@ -88,14 +125,17 @@ function App() {
 
                   {/* Main Layout Container */}
                   <div className="layout-container">
-                    
                     <aside className="sidebar left-sidebar">
                       <Nav user={user} />
                     </aside>
 
                     <main className="main-feed-container">
                       <AddTweet user={user} />
-                      <MainFeed user={user} searchTerm={searchTerm} />
+                      <MainFeed 
+                        key={refreshKey} 
+                        user={user} 
+                        searchTerm={searchTerm} 
+                      />
                       <Footer />
                     </main>
           

@@ -822,6 +822,38 @@ footer {
   .app-logo {
     font-size: 1.3rem;
   }
+
+  .app-logo-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.app-logo-btn:hover {
+  background: var(--background-color);
+  transform: scale(1.05);
+}
+
+.app-logo-btn:active {
+  transform: scale(0.95);
+}
+
+.app-logo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  transition: color 0.2s;
+}
+
+.app-logo-btn:hover .app-logo {
+  color: var(--primary-hover);
+}
   
   .layout-container {
     padding: 0.25rem;
