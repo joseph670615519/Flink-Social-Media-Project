@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -15,21 +14,6 @@ import Search from './components/Search.jsx';
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import MainFeed from './components/MainFeed.jsx';
-=======
-import { useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.css'
-
-import TweetList from './components/TweetList.jsx'
-import Nav from './components/Nav.jsx'
-import Footer from './components/Footer.jsx'
-import { TweetProvider } from './components/TweetContext.jsx'
-import AddTweet from './components/AddTweet.jsx'
-import List from './components/List.jsx'
-import Search from './components/Search.jsx'
-import LogIn from './pages/LogIn.jsx'
-import Register from './pages/Register.jsx'
->>>>>>> 9c2c5262001538eb6dd14cc835ebabd0fe72744f
 
 function App() {
   const [user, setUser] = useState(null);
@@ -45,7 +29,6 @@ function App() {
     console.log('Searching for:', term);
   };
 
-<<<<<<< HEAD
    return (
     <TweetProvider>
       <BrowserRouter>
@@ -85,45 +68,6 @@ function App() {
       </BrowserRouter>
     </TweetProvider>
   );
-=======
-  return (
-     <TweetProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LogIn />} />
-
-            <Route path="/register" element={<Register />} />
-
-            <Route path="/feed" 
-            element = {
-              <div className="App">   
-
-                <header className="fixed-header">
-                  <Search onSearch={handleSearch} />
-                </header>
-
-                <div className="nav-container">
-                  <Nav />
-                </div>
-
-                <div className="list-container">
-                  <List />
-                </div>
-
-                <div className="main-content">
-                  <AddTweet />
-                  <TweetList />
-                  <Footer />
-                </div>
-              
-              </div>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </TweetProvider>
-  )
->>>>>>> 9c2c5262001538eb6dd14cc835ebabd0fe72744f
 }
 
 export default App;
