@@ -12,8 +12,7 @@ const AddTweet = () => {
 
     const addTweet = (e) => {
         e.preventDefault();
-        const currentUser = auth.currentUser; // Now this should work
-        
+        const currentUser = auth.currentUser;
         if (!currentUser) {
             alert('You must be logged in to post!');
             return;

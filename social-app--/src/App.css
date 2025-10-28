@@ -27,23 +27,59 @@ body {
   background-color: var(--background-color);
 }
 
+/* Header Styles - Facebook-like with proper layout */
 .app-header {
   position: sticky;
   top: 0;
   background: var(--card-background);
   z-index: 1000;
-  padding: 0.5rem 1rem;
+  padding: 0 1rem;
   border-bottom: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 56px;
   display: flex;
   align-items: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.app-logo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.header-center {
+  flex: 2;
+  max-width: 680px;
+  display: flex;
   justify-content: center;
-  height: 60px;
+}
+
+.header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .search-container {
   width: 100%;
-  max-width: 680px;
+  max-width: 400px;
 }
 
 .search-input {
@@ -62,6 +98,7 @@ body {
   background-color: var(--card-background);
 }
 
+/* Notification Styles */
 .notification-wrapper {
   display: flex;
   align-items: center;
@@ -227,15 +264,17 @@ body {
   margin-top: 0.5rem;
 }
 
+/* Main Layout Container */
 .layout-container {
   display: flex;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
   gap: 1rem;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 56px);
 }
 
+/* Sidebar Styles */
 .sidebar {
   width: 280px;
   padding: 1rem 0;
@@ -243,18 +282,19 @@ body {
 
 .left-sidebar {
   position: sticky;
-  top: 76px;
-  height: calc(100vh - 92px);
+  top: 72px;
+  height: calc(100vh - 88px);
   overflow-y: auto;
 }
 
 .right-sidebar {
   position: sticky;
-  top: 76px;
-  height: calc(100vh - 92px);
+  top: 72px;
+  height: calc(100vh - 88px);
   overflow-y: auto;
 }
 
+/* Main Feed Container */
 .main-feed-container {
   flex: 1;
   max-width: 680px;
@@ -262,6 +302,7 @@ body {
   padding: 0;
 }
 
+/* Navigation Styles */
 .nav-container {
   background: var(--card-background);
   border-radius: 8px;
@@ -310,6 +351,7 @@ body {
   border-radius: 6px;
 }
 
+/* List Styles */
 .list-container {
   background: var(--card-background);
   border-radius: 8px;
@@ -365,6 +407,7 @@ body {
   font-size: 0.9rem;
 }
 
+/* Add Tweet Styles */
 .add-tweet-card {
   background: var(--card-background);
   border-radius: 8px;
@@ -471,14 +514,6 @@ footer {
 
 .list-container button:hover {
   background-color: var(--primary-hover);
-}
-
-.notification-container {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-left: auto;
-  margin-right: 20px;
 }
 
 .profile-page {
@@ -686,7 +721,6 @@ footer {
   color: var(--text-primary);
 }
 
-/* Buttons */
 .primary-btn {
   background-color: var(--primary-color);
   color: white;
@@ -748,12 +782,45 @@ footer {
   .right-sidebar {
     order: 3;
   }
+  
+  .header-center {
+    max-width: 300px;
+  }
 }
 
 @media (max-width: 768px) {
   .app-header {
-    padding: 0.5rem;
+    padding: 0 0.5rem;
     height: 50px;
+  }
+  
+  .header-content {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .header-left,
+  .header-center,
+  .header-right {
+    flex: none;
+  }
+  
+  .header-left {
+    order: 1;
+  }
+  
+  .header-center {
+    order: 3;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .header-right {
+    order: 2;
+  }
+  
+  .app-logo {
+    font-size: 1.3rem;
   }
   
   .layout-container {
@@ -780,6 +847,11 @@ footer {
   .profile-details {
     margin-left: 0;
     margin-top: 0.5rem;
+  }
+  
+  .notification-dropdown {
+    width: 300px;
+    right: -50px;
   }
 }
 
@@ -811,6 +883,15 @@ footer {
     min-width: 80px;
     text-align: center;
     padding: 0.75rem 0.5rem;
+  }
+  
+  .notification-dropdown {
+    width: 280px;
+    right: -80px;
+  }
+  
+  .app-logo {
+    font-size: 1.2rem;
   }
 }
 

@@ -64,11 +64,11 @@ export default function Profile({ user }) {
               <h3>Overview</h3>
               <div className="about-grid">
                 <div className="about-item">
-                  <span className="about-label">Joined</span>
+                  <span className="about-label">Joined </span>
                   <span className="about-value">{userData.joinDate}</span>
                 </div>
                 <div className="about-item">
-                  <span className="about-label">Email</span>
+                  <span className="about-label">Email </span>
                   <span className="about-value">{email}</span>
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function Profile({ user }) {
     <div className="profile-page">
       {/* Profile Header */}
       <div className="profile-header">
-        {/* Simple cover - no image for new account */}
+       
         <div className="cover-photo-container" style={{ 
           background: 'linear-gradient(135deg, #86c76b, #6bbf4e)',
           height: '200px',
