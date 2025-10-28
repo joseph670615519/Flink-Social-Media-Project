@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
+import { useNavigate } from 'react-router-dom';
 import './Login.css'
 
 function LogIn() {
     const[username, setUsername] = useState('');
     const[password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -14,6 +16,8 @@ function LogIn() {
         }
 
         console.log('Logging in with:', { username, password });
+
+        navigate('/');
     }
 
   return (
@@ -34,7 +38,8 @@ function LogIn() {
 
                 <button type='submit' className='login-btn'>Log In</button>
 
-                <div className='create-account'><a href='/register'>Create an account</a></div>
+                <div className='create-account'>
+                    <a href='/register'>Create an account</a></div>
 
             </form>
         </div>
