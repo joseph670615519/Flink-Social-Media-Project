@@ -11,6 +11,11 @@ import AddTweet from './components/AddTweet.jsx';
 import List from './components/List.jsx';
 import Search from './components/Search.jsx';
 
+import Layout from './pages/Layout.jsx';
+
+import Register from './pages/Register.jsx';
+import LogIn from './pages/LogIn.jsx';
+
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx';
 import MainFeed from './components/MainFeed.jsx';
@@ -32,20 +37,19 @@ function App() {
    return (
     <TweetProvider>
       <BrowserRouter>
-        <header className="fixed-header">
-          <Search onSearch={handleSearch} />
-        </header>
+        <Routes>
+        
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/register" element={<Register />} />
+          
+          <Route element={
+            <Layout 
+              user={user} 
+              handleSearch={handleSearch} 
+              MainFeed={MainFeed} 
+              searchTerm={searchTerm} /> 
+            }>
 
-        <div className="App">
-          {/* left nav */}
-          <aside className="nav-container">
-            <Nav user={user} />
-          </aside>
-
-          {/* center content */}
-          <main className="main-content">
-            <Suspense fallback={<div className="loading">Loading...</div>}>
-              <Routes>
                 <Route path="/" element={
                   <>
                     <AddTweet user={user} />
@@ -54,17 +58,11 @@ function App() {
                     <Footer />
                   </>
                 } />
+
                 <Route path="/me" element={<Profile user={user} />} />
                 <Route path="/profile/:userId" element={<UserProfile />} />
-              </Routes>
-            </Suspense>
-          </main>
-
-          {/* right friends list */}
-          <aside className="list-container">
-            <List />
-          </aside>
-        </div>
+            </Route>
+          </Routes>
       </BrowserRouter>
     </TweetProvider>
   );

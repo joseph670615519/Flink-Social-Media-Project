@@ -1,12 +1,14 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import './Register.css'
+import { useNavigate } from 'react-router-dom'; 
 
 function Register () {
     const [Username, setUsername] = React.useState('');
     const [DoB, setDoB] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [pw, setPw] = React.useState('');
-    
+    const navigate = useNavigate();
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -31,8 +33,9 @@ function Register () {
             return;
         }
 
-        alert('Registration successful!');
         console.log('Registering with:', { Username, DoB, email, pw });
+        alert('Registration successful!');
+        navigate('/login');
     };
 
   return (
@@ -65,7 +68,7 @@ function Register () {
            
         </form>
 
-        <p>Already have an account? <a href="/"><br></br>Log-in</a></p>
+        <p>Already have an account? <a href="/login"><br></br>Log-in</a></p>
     </div>
   )
 }
