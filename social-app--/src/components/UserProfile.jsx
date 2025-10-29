@@ -1,29 +1,61 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { TweetContext } from './TweetContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import avatarImg from '../assets/FlinkAva.png';
 
 export default function UserProfile() {
   const { userId } = useParams();
   const [tweets = []] = useContext(TweetContext) || [];
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   
-    const user = {
-      id: userId,
-      displayName: `User ${userId?.substring(0, 8)}` || 'User',
-      email: `${userId}@example.com` || '',
-      photoURL: avatarImg,
-      bio: 'This user prefers to keep an air of mystery about them.',
-      joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+    const fetchUserData = async () => {
+      try {
+        console.log('Fetching user data for:', userId);
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        
+        if (userDoc.exists()) {
+          setUserData({
+            id: userId,
+            ...userDoc.data()
+          });
+        } else {
+          setUserData({
+            id: userId,
+            displayName: 'User Not Found',
+            email: '',
+            bio: 'This user could not be found.',
+            joinDate: 'Unknown'
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setUserData({
+          id: userId,
+          displayName: 'Error Loading User',
+          email: '',
+          bio: 'There was an error loading this profile.',
+          joinDate: 'Unknown'
+        });
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    setUserData(user);
+
+    if (userId) {
+      fetchUserData();
+    }
   }, [userId]);
 
-  if (!userData) {
+  if (loading) {
     return <div className="main-content">Loading profile...</div>;
+  }
+
+  if (!userData) {
+    return <div className="main-content">User not found</div>;
   }
 
   const userTweets = tweets.filter(t => t.userId === userId);
@@ -32,7 +64,6 @@ export default function UserProfile() {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        {/* Simple cover for other users */}
         <div className="cover-photo-container" style={{ 
           background: 'linear-gradient(135deg, #86c76b, #6bbf4e)',
           height: '200px',
@@ -53,9 +84,9 @@ export default function UserProfile() {
           />
           <div className="profile-details">
             <h1>{userData.displayName}</h1>
-            {userData.email && <p className="profile-email">{userData.email}</p>}
+            {userData.email && <p className="profile-email" style={{color: '#666', margin: '0.25rem 0'}}>{userData.email}</p>}
             <p className="profile-bio" style={{ marginBottom: '1rem', color: '#666' }}>
-              {userData.bio}
+              {userData.bio || 'Welcome to my profile!'}
             </p>
             <div className="profile-actions">
               <button className="primary-btn">Add Friend</button>
@@ -80,7 +111,7 @@ export default function UserProfile() {
         </div>
       </div>
 
-      <section className="profile-posts">
+      <section className="profile-posts" style={{ padding: '1rem' }}>
         <h2>{userData.displayName}'s Posts</h2>
         {userTweets.length === 0 ? (
           <div className="empty-state">

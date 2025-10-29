@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import './App.css';
@@ -16,7 +16,7 @@ import MainFeed from './components/MainFeed.jsx';
 import List from './components/List.jsx';
 import Search from './components/Search.jsx';
 import Profile from './components/Profile.jsx';
-import UserProfile from './components/UserProfile.jsx';
+import UserProfile from './components/UserProfile.jsx'; 
 import Notification from './components/Notification.jsx';
 
 function Logo({ onRefresh }) {
@@ -106,11 +106,10 @@ function App() {
             element={
               user ? (
                 <div className="app-layout">
-               
                   <header className="app-header">
                     <div className="header-content">
                       <div className="header-left">
-                        <Logo onRefresh={handleRefreshFeed} /> 
+                        <Logo onRefresh={handleRefreshFeed} />
                       </div>
                       
                       <div className="header-center">

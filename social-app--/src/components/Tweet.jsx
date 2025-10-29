@@ -1,5 +1,6 @@
 import './Tweet.css';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import avatarImg from '../assets/FlinkAva.png';
 
 const Tweet = (props) => {
@@ -11,12 +12,32 @@ const Tweet = (props) => {
         setIsLiked(!isLiked);
     }
 
-     return (
+    return (
         <div className="tweet-card">
             <div className="tweet-header">
-                <img src={props.avatar || avatarImg} alt="User" className="tweet-avatar" />
+                <Link to={`/profile/${props.userId}`}>
+                    <img 
+                        src={props.avatar || avatarImg} 
+                        alt="User" 
+                        className="tweet-avatar"
+                        style={{ cursor: 'pointer' }}
+                    />
+                </Link>
                 <div className="tweet-user-info">
-                    <strong>{props.userName || "User"}</strong>
+                    <Link 
+                        to={`/profile/${props.userId}`} 
+                        style={{ 
+                            textDecoration: 'none', 
+                            color: 'inherit',
+                            fontWeight: 'bold',
+                            display: 'block',
+                            marginBottom: '2px'
+                        }}
+                        onMouseOver={(e) => e.target.style.color = '#86c76b'}
+                        onMouseOut={(e) => e.target.style.color = 'inherit'}
+                    >
+                        {props.userName || "User"}
+                    </Link>
                     <span className="tweet-date">{props.date}</span>
                 </div>
             </div>
