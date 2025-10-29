@@ -10,7 +10,6 @@ import LogIn from './pages/LogIn.jsx';
 import Register from './pages/Register.jsx';
 
 import Nav from './components/Nav.jsx';
-import Footer from './components/Footer.jsx';
 import AddTweet from './components/AddTweet.jsx';
 import MainFeed from './components/MainFeed.jsx';
 import List from './components/List.jsx';
@@ -18,6 +17,7 @@ import Search from './components/Search.jsx';
 import Profile from './components/Profile.jsx';
 import UserProfile from './components/UserProfile.jsx'; 
 import Notification from './components/Notification.jsx';
+import Chat from './components/chat.jsx';
 
 function Logo({ onRefresh }) {
   const navigate = useNavigate();
@@ -117,6 +117,7 @@ function App() {
                       </div>
                       
                       <div className="header-right">
+                        <Chat /> {/* CHAT ADDED HERE */}
                         <Notification />
                       </div>
                     </div>
@@ -135,7 +136,7 @@ function App() {
                         user={user} 
                         searchTerm={searchTerm} 
                       />
-                      <Footer />
+                      {/* Footer removed */}
                     </main>
           
                     <aside className="sidebar right-sidebar">
