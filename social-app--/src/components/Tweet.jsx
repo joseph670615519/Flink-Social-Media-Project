@@ -1,13 +1,13 @@
 import './Tweet.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase'; 
+import { auth } from '../firebase';
 import avatarImg from '../assets/FlinkAva.png';
 
 const Tweet = (props) => {
     const [likes, setLikes] = useState(props.likes);
     const [isLiked, setIsLiked] = useState(false);
-
+    
     const currentUser = auth.currentUser;
     const isOwnTweet = currentUser && props.userId === currentUser.uid;
 
@@ -27,7 +27,7 @@ const Tweet = (props) => {
                         style={{ cursor: 'pointer' }}
                     />
                 </Link>
-                <div className="tweet-user-info"> 
+                <div className="tweet-user-info">
                     <Link 
                         to={isOwnTweet ? "/me" : `/profile/${props.userId}`}
                         style={{ 
@@ -41,7 +41,6 @@ const Tweet = (props) => {
                         onMouseOut={(e) => e.target.style.color = 'inherit'}
                     >
                         {props.userName || "User"}
-                        {isOwnTweet && " (You)"} 
                     </Link>
                     <span className="tweet-date">{props.date}</span>
                 </div>
@@ -49,6 +48,21 @@ const Tweet = (props) => {
             <div className="tweet-content">
                 <h3>{props.title}</h3>
                 <p>{props.message}</p>
+                
+                {props.imageURL && (
+                    <div style={{ marginTop: '1rem' }}>
+                        <img 
+                            src={props.imageURL} 
+                            alt="Tweet attachment"
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '300px',
+                                borderRadius: '8px',
+                                objectFit: 'cover'
+                            }}
+                        />
+                    </div>
+                )}
             </div>
             <div className="tweet-actions">
                 <button onClick={handleLike} className={`like-btn ${isLiked ? 'liked' : ''}`}>
