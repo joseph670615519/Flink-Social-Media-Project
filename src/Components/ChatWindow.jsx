@@ -1,43 +1,115 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { db, auth } from '../firebase.js';
+import {
+  collection, query, orderBy, onSnapshot,
+  addDoc, serverTimestamp, doc, setDoc, updateDoc
+} from "firebase/firestore";
 
 function ChatWindow({ selectedFriend, setShowProfile, showProfile }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
-  const [sendingStatus, setSendingStatus] = useState('');
+  const messagesEndRef = useRef(null);
 
+  // ===== Load messages from Firestore =====
   useEffect(() => {
-    if (selectedFriend) {
-      setMessages([
-        { id: 1, text: 'Hey! How are you doing?', from: 'them', timestamp: new Date(Date.now() - 3600000), status: 'read' },
-        { id: 2, text: 'I am good! Thanks for asking 😊', from: 'me', timestamp: new Date(Date.now() - 3500000), status: 'read' },
-        { id: 3, text: 'Want to grab lunch today?', from: 'them', timestamp: new Date(Date.now() - 3400000), status: 'read' },
-        { id: 4, text: 'Sure! What time works for you?', from: 'me', timestamp: new Date(Date.now() - 300000), status: 'sent' },
-      ]);
-    }
+    if (!selectedFriend || !auth.currentUser) return;
+
+    const chatId = [auth.currentUser.uid, selectedFriend.uid].sort().join("_");
+    const messagesRef = collection(db, "chats", chatId, "messages");
+    const q = query(messagesRef, orderBy("timestamp"));
+
+    // 🔄 Real-time listener
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(msgs);
+    });
+
+    return () => unsubscribe();
   }, [selectedFriend]);
 
-  const sendMessage = () => {
-    if (!inputText.trim()) return;
-    const newMessage = { id: messages.length + 1, text: inputText, from: 'me', timestamp: new Date(), status: 'sending' };
-    setMessages([...messages, newMessage]);
-    setInputText('');
-    setSendingStatus('sending');
+  // ===== Auto-scroll when new messages come =====
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    setTimeout(() => {
-      setMessages(prev => prev.map(msg => msg.id === newMessage.id ? { ...msg, status: 'sent' } : msg));
-      setSendingStatus('sent');
-      setTimeout(() => setSendingStatus(''), 2000);
-    }, 1000);
+  // ===== Mark messages as READ when user views chat =====
+  useEffect(() => {
+    if (!selectedFriend || !auth.currentUser) return;
+    const chatId = [auth.currentUser.uid, selectedFriend.uid].sort().join("_");
+    const messagesRef = collection(db, "chats", chatId, "messages");
+
+    const markAsRead = async () => {
+      const unreadMsgs = messages.filter(
+        msg => msg.sender === selectedFriend.uid && msg.status !== 'read'
+      );
+
+      // 🔁 Update each unread message to "read"
+      for (const msg of unreadMsgs) {
+        const msgRef = doc(messagesRef, msg.id);
+        await updateDoc(msgRef, { status: 'read' });
+      }
+    };
+
+    markAsRead();
+  }, [messages, selectedFriend]);
+
+  // ===== Send message =====
+  const sendMessage = async () => {
+    if (!inputText.trim() || !selectedFriend || !auth.currentUser) return;
+
+    const chatId = [auth.currentUser.uid, selectedFriend.uid].sort().join("_");
+    const messagesRef = collection(db, "chats", chatId, "messages");
+
+    // 🕓 Temporary message (local display)
+    const tempMessage = {
+      id: Date.now().toString(),
+      sender: auth.currentUser.uid,
+      text: inputText,
+      timestamp: new Date(),
+      status: 'sending'
+    };
+    setMessages(prev => [...prev, tempMessage]);
+    setInputText('');
+
+    // ✅ Ensure chat document exists
+    const chatDocRef = doc(db, "chats", chatId);
+    await setDoc(chatDocRef, {
+      participants: [auth.currentUser.uid, selectedFriend.uid],
+      lastUpdated: serverTimestamp()
+    }, { merge: true });
+
+    // 🚀 Add real message to Firestore
+    const docRef = await addDoc(messagesRef, {
+      sender: auth.currentUser.uid,
+      text: tempMessage.text,
+      timestamp: serverTimestamp(),
+      status: 'sent'
+    });
+
+    // ✅ Replace temp message with Firestore one
+    setMessages(prev =>
+      prev.map(msg =>
+        msg.id === tempMessage.id ? { ...msg, id: docRef.id, status: 'sent' } : msg
+      )
+    );
   };
 
-  const handleKeyPress = (e) => { if (e.key === 'Enter') sendMessage(); };
+  // ===== Enter to send =====
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') sendMessage();
+  };
 
   const shouldShowTimestamp = (currentMsg, previousMsg) => {
-    if (!previousMsg) return true;
-    return currentMsg.timestamp - previousMsg.timestamp > 10 * 60 * 1000;
+    if (!previousMsg || !currentMsg.timestamp) return true;
+    const currentTime = currentMsg.timestamp.toDate ? currentMsg.timestamp.toDate() : currentMsg.timestamp;
+    const prevTime = previousMsg.timestamp.toDate ? previousMsg.timestamp.toDate() : previousMsg.timestamp;
+    return currentTime - prevTime > 10 * 60 * 1000;
   };
 
-  const formatTimestamp = (date) => date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const formatTimestamp = (timestamp) => {
+    const date = timestamp.toDate ? timestamp.toDate() : timestamp;
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
 
   if (!selectedFriend) {
     return (
@@ -53,6 +125,7 @@ function ChatWindow({ selectedFriend, setShowProfile, showProfile }) {
 
   return (
     <div className="chat-window">
+      {/* ===== Header ===== */}
       <div className="chat-header">
         <div className="chat-header-info">
           <div className="header-avatar">
@@ -61,33 +134,65 @@ function ChatWindow({ selectedFriend, setShowProfile, showProfile }) {
           </div>
           <div>
             <div className="header-name">{selectedFriend.name}</div>
-            <div className="header-status">{selectedFriend.online ? 'Active now' : 'Offline'}</div>
+            <div className="header-status">
+              {selectedFriend.online ? 'Active now' : 'Offline'}
+            </div>
           </div>
         </div>
         <div className="chat-header-actions">
           <button className="icon-button" title="Voice Call">📞</button>
           <button className="icon-button" title="Video Call">📹</button>
-          <button className="icon-button" title="Conversation Information" onClick={() => setShowProfile(!showProfile)}>ℹ️</button>
+          <button
+            className="icon-button"
+            title="Conversation Information"
+            onClick={() => setShowProfile(!showProfile)}
+          >
+            ℹ️
+          </button>
         </div>
       </div>
+
+      {/* ===== Messages ===== */}
       <div className="messages">
         {messages.map((msg, index) => (
           <div key={msg.id}>
-            {shouldShowTimestamp(msg, messages[index - 1]) && <div className="timestamp-divider">{formatTimestamp(msg.timestamp)}</div>}
-            <div className={`message-wrapper ${msg.from}`}>
-              <div className={`message ${msg.from}`}>{msg.text}</div>
-              {msg.from === 'me' && msg.status && <div className="message-status">{msg.status === 'sending' ? '⏳ Sending...' : msg.status === 'sent' ? '✓ Sent' : '✓✓ Read'}</div>}
+            {shouldShowTimestamp(msg, messages[index - 1]) && msg.timestamp && (
+              <div className="timestamp-divider">{formatTimestamp(msg.timestamp)}</div>
+            )}
+            <div className={`message-wrapper ${msg.sender === auth.currentUser.uid ? 'me' : 'them'}`}>
+              <div className={`message ${msg.sender === auth.currentUser.uid ? 'me' : 'them'}`}>
+                {msg.text}
+              </div>
+
+              {/* 👇 Status below the bubble */}
+              {msg.sender === auth.currentUser.uid && (
+                <div className="message-status">
+                  {msg.status === 'sending' && '⏳ Sending...'}
+                  {msg.status === 'sent' && '✓ Sent'}
+                  {msg.status === 'read' && '✓✓ Read'}
+                </div>
+              )}
             </div>
           </div>
         ))}
-        {sendingStatus && <div className="sending-indicator">{sendingStatus === 'sending' ? 'Sending...' : 'Sent!'}</div>}
+        <div ref={messagesEndRef}></div>
       </div>
+
+      {/* ===== Input ===== */}
       <div className="chat-input">
         <button className="icon-button">➕</button>
         <button className="icon-button">📷</button>
-        <input type="text" placeholder="Aa" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyPress={handleKeyPress} />
+        <input
+          type="text"
+          placeholder="Aa"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
         <button className="icon-button">😊</button>
-        <button className="send-button" onClick={sendMessage} disabled={!inputText.trim()}>➤</button>
+        <button className="send-button" onClick={sendMessage} disabled={!inputText.trim()}>
+          ➤
+        </button>
       </div>
     </div>
   );

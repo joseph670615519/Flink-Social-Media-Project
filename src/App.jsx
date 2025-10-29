@@ -3,6 +3,16 @@ import Sidebar from './Components/Sidebar';
 import ChatWindow from './Components/ChatWindow';
 import ProfilePanel from './Components/ProfilePanel';
 import './index.css';
+import { auth } from './firebase.js';
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+
+signInWithEmailAndPassword(auth, "friendstesting1@gmail.com", "123456")
+  .then(() => {
+    console.log("✅ Logged in as Tester1");
+  })
+  .catch(err => console.error("❌ Login failed:", err));
+
 
 function App() {
   const [selectedFriend, setSelectedFriend] = useState(null);
