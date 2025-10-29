@@ -1,9 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { TweetContext } from './TweetContext';
+import { auth } from '../firebase';
 
 function Notification() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef(null);
+  const [tweets] = useContext(TweetContext) || [];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -18,37 +21,49 @@ function Notification() {
     };
   }, []);
 
-  const people = ['Anakin', 'Baton', 'Donut', 'Joe', 'Nine'];
-  
-  const notificationTypes = [
-    { text: 'liked your post', emoji: '❤️' },
-    { text: 'commented: "Nice!"', emoji: '💬' },
-    { text: 'sent friend request', emoji: '👋' },
-    { text: 'mentioned you', emoji: '📍' },
-    { text: 'shared your post', emoji: '↪️' },
-    { text: 'has birthday today', emoji: '🎂' },
-    { text: 'started following', emoji: '⭐' },
-    { text: 'sent a message', emoji: '✉️' }
-  ];
+  const generateRealisticNotifications = () => {
+    if (!tweets.length) return [];
 
-  const addNotification = () => {
-    const person = people[Math.floor(Math.random() * people.length)];
-    const type = notificationTypes[Math.floor(Math.random() * notificationTypes.length)];
-    const times = ['Just now', '1 min ago', '2 min ago', '5 min ago'];
-    const time = times[Math.floor(Math.random() * times.length)];
-    
-    const newNotif = {
-      id: Date.now(),
-      person: person,
-      action: type.text,
-      emoji: type.emoji,
-      time: time,
-      read: false
-    };
-    
-    setNotifications(old => [newNotif, ...old.slice(0, 9)]); 
+    const currentUser = auth.currentUser;
+    if (!currentUser) return [];
+
+    const recentTweets = tweets
+      .filter(tweet => tweet.userId !== currentUser.uid) 
+      .slice(0, 5); 
+
+    const notificationTypes = [
+      { text: 'liked your post', emoji: '❤️' },
+      { text: 'commented on your post', emoji: '💬' },
+      { text: 'shared your post', emoji: '↪️' },
+      { text: 'mentioned you in a post', emoji: '📍' },
+    ];
+
+    return recentTweets.map((tweet, index) => {
+      const type = notificationTypes[Math.floor(Math.random() * notificationTypes.length)];
+      const times = ['Just now', '5 min ago', '10 min ago', '1 hour ago'];
+      const time = times[Math.floor(Math.random() * times.length)];
+      
+      return {
+        id: `notif-${tweet.id}-${index}`,
+        person: tweet.userName || 'User',
+        userId: tweet.userId,
+        action: type.text,
+        emoji: type.emoji,
+        time: time,
+        read: false,
+        tweetId: tweet.id,
+        type: 'interaction'
+      };
+    });
   };
 
+  useEffect(() => {
+    if (tweets.length > 0) {
+      const realisticNotifications = generateRealisticNotifications();
+      setNotifications(realisticNotifications);
+    }
+  }, [tweets.length]); 
+  
   const markAsRead = (id) => {
     setNotifications(old => 
       old.map(item => 
@@ -110,7 +125,6 @@ function Notification() {
         )}
       </button>
 
-      {/* Notifications dropdown */}
       {showNotifications && (
         <div style={{
           position: 'absolute',
@@ -189,7 +203,7 @@ function Notification() {
               }}>
                 No notifications yet
                 <div style={{ marginTop: '8px', fontSize: '12px', color: '#999' }}>
-                  Notifications will appear here
+                  Interactions with your posts will appear here
                 </div>
               </div>
             ) : (

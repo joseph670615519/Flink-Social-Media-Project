@@ -1,11 +1,15 @@
 import './Tweet.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { auth } from '../firebase'; 
 import avatarImg from '../assets/FlinkAva.png';
 
 const Tweet = (props) => {
     const [likes, setLikes] = useState(props.likes);
     const [isLiked, setIsLiked] = useState(false);
+
+    const currentUser = auth.currentUser;
+    const isOwnTweet = currentUser && props.userId === currentUser.uid;
 
     const handleLike = () => {
         setLikes(isLiked ? likes - 1 : likes + 1);
@@ -15,7 +19,7 @@ const Tweet = (props) => {
     return (
         <div className="tweet-card">
             <div className="tweet-header">
-                <Link to={`/profile/${props.userId}`}>
+                <Link to={isOwnTweet ? "/me" : `/profile/${props.userId}`}>
                     <img 
                         src={props.avatar || avatarImg} 
                         alt="User" 
@@ -23,9 +27,9 @@ const Tweet = (props) => {
                         style={{ cursor: 'pointer' }}
                     />
                 </Link>
-                <div className="tweet-user-info">
+                <div className="tweet-user-info"> 
                     <Link 
-                        to={`/profile/${props.userId}`} 
+                        to={isOwnTweet ? "/me" : `/profile/${props.userId}`}
                         style={{ 
                             textDecoration: 'none', 
                             color: 'inherit',
@@ -37,6 +41,7 @@ const Tweet = (props) => {
                         onMouseOut={(e) => e.target.style.color = 'inherit'}
                     >
                         {props.userName || "User"}
+                        {isOwnTweet && " (You)"} 
                     </Link>
                     <span className="tweet-date">{props.date}</span>
                 </div>
