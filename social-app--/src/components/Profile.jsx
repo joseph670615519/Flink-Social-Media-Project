@@ -2,10 +2,26 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TweetContext } from './TweetContext';
 import avatarImg from '../assets/FlinkAva.png';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function Profile({ user }) {
   const [tweets = []] = useContext(TweetContext) || [];
   const [activeTab, setActiveTab] = useState('posts');
+
+  const handleLogout = async () => {
+  const confirmLogout = window.confirm('Are you sure you want to log out?');
+  if (confirmLogout) {
+    try {
+      await signOut(auth);
+      console.log('User logged out successfully');
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.href = '/login';
+    }
+  }
+};
   
   const displayName = user?.displayName || 'New User';
   const email = user?.email || '';
@@ -173,6 +189,9 @@ export default function Profile({ user }) {
             <div className="profile-actions">
               <button className="primary-btn">Edit Profile</button>
               <button className="secondary-btn">Share Profile</button>
+              <button onClick={handleLogout} 
+              className="secondary-btn" style={{background:'#ff6b6b',color: 'white', border: '1px solid #ff6b6b'}}>Logout
+              </button>
             </div>
           </div>
         </div>

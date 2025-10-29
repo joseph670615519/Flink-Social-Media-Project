@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { TweetContext } from './TweetContext';
-import { auth } from '../firebase'; // Fixed import path
+import { auth, db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const AddTweet = () => {
     const [title, setTitle] = useState('');
@@ -10,7 +11,7 @@ const AddTweet = () => {
     const updateTitle = (e) => setTitle(e.target.value);
     const updateMessage = (e) => setMessage(e.target.value);
 
-    const addTweet = (e) => {
+    const addTweet = async (e) => {
         e.preventDefault();
         const currentUser = auth.currentUser;
         if (!currentUser) {
@@ -18,22 +19,41 @@ const AddTweet = () => {
             return;
         }
 
-        const newTweet = { 
-            title, 
-            message, 
-            likes: 0, 
-            id: Date.now(),
-            userId: currentUser.uid,
-            userName: currentUser.displayName || currentUser.email,
-            userAvatar: currentUser.photoURL,
-            date: new Date().toLocaleDateString()
-        };
+        try {
+   
+            const docRef = await addDoc(collection(db, 'tweets'), {
+                title, 
+                message, 
+                likes: 0,
+                userId: currentUser.uid,
+                userName: currentUser.displayName || currentUser.email,
+                userAvatar: currentUser.photoURL,
+                date: new Date().toLocaleDateString(),
+                createdAt: serverTimestamp()
+            });
         
-        const updatedTweets = [...tweets, newTweet];
-        setTweets(updatedTweets);
-        
-        setTitle('');
-        setMessage('');
+            const newTweet = { 
+                title, 
+                message, 
+                likes: 0, 
+                id: docRef.id,
+                userId: currentUser.uid,
+                userName: currentUser.displayName || currentUser.email,
+                userAvatar: currentUser.photoURL,
+                date: new Date().toLocaleDateString()
+            };
+            
+            const updatedTweets = [...tweets, newTweet];
+            setTweets(updatedTweets);
+            
+            setTitle('');
+            setMessage('');
+            
+            console.log('Tweet saved to Firestore tweets with ID:', docRef.id);
+        } catch (error) {
+            console.error('Error saving tweet:', error);
+            alert('Failed to post tweet: ' + error.message);
+        }
     };
 
     return (
