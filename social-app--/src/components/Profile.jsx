@@ -153,23 +153,6 @@ export default function Profile({ user }) {
           </div>
         );
       
-      case 'photos':
-        return (
-          <div className="photos-tab">
-            <div className="section-header">
-              <h3>Photos ({photos.length})</h3>
-              <button className="see-all-btn">See All Photos</button>
-            </div>
-            <div className="photos-grid">
-              {photos.map(photo => (
-                <div key={photo.id} className="photo-item">
-                  <img src={photo.url} alt={photo.alt} />
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      
       default:
         return <div className="posts-tab">Select a tab to view content</div>;
     }
@@ -242,12 +225,6 @@ export default function Profile({ user }) {
           onClick={() => setActiveTab('friends')}
         >
           Friends
-        </button>
-        <button 
-          className={`tab ${activeTab === 'photos' ? 'active' : ''}`}
-          onClick={() => setActiveTab('photos')}
-        >
-          Photos
         </button>
         <button className="tab">Videos</button>
         <button className="tab">More ⋯</button>

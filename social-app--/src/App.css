@@ -3,7 +3,7 @@
   line-height: 1.5;
   font-weight: 400;
   color: #222;
-  background-color: #f0f2f5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 a {
@@ -19,23 +19,27 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #f0f2f5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
 }
 
 button {
-  border-radius: 20px;
+  border-radius: 25px;
   border: none;
-  padding: 0.6em 1.2em;
+  padding: 0.8em 1.5em;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
-  background-color: #86c76b;
+  background: linear-gradient(135deg, #ff6b9d, #c44569);
   color: #fff;
   cursor: pointer;
-  transition: background 0.25s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
 }
 button:hover {
-  background-color: #6bbf4e;
+  background: linear-gradient(135deg, #ff5a8e, #b73c5f);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
 }
 button:focus,
 button:focus-visible {

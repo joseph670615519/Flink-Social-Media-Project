@@ -1,0 +1,68 @@
+/* Flink Logo Styles */
+.flink-logo {
+  display: inline-block;
+  position: relative;
+}
+
+.flink-logo-text {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b9d 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+  position: relative;
+}
+
+.flink-logo-text::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2, #ff6b9d);
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.3;
+  transform: translate(-50%, -50%) scale(0.8);
+  z-index: -1;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Flink Brand Colors */
+.flink-primary {
+  color: #667eea;
+}
+
+.flink-secondary {
+  color: #764ba2;
+}
+
+.flink-accent {
+  color: #ff6b9d;
+}
+
+.flink-gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.flink-gradient-text {
+  background: linear-gradient(135deg, #667eea, #764ba2, #ff6b9d);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

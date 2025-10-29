@@ -1,27 +1,40 @@
-import React, {useState, createContext} from "react";
+import React, { useState, createContext, useEffect } from "react";
+import { subscribeToAllPosts } from "../services/postsService";
+
 export const TweetContext = createContext();
+
 export const TweetProvider = (props) => {
     const [tweets, setTweets] = useState([
-         {
-            title: "First Tweet",
-            message: "This is my first tweet!",
-            likes: 0,
-            id: 0,
-            userId: "current-user",
-            date: new Date().toLocaleDateString()
-        },
         {
-            title: "Second Tweet",
-            message: "This is my second tweet!",
-            likes: 3,
-            id: 1,
-            userId: "current-user",
-            date: new Date().toLocaleDateString()
-        },
+            title: "Welcome to Flink",
+            message: "This is my first tweet! Welcome to Flink - where you can connect, share, and communicate with friends!",
+            likes: [],
+            comments: [],
+            id: "demo-1",
+            userId: "demo-user",
+            userDisplayName: "Flink Admin",
+            userPhotoURL: '',
+            date: new Date().toLocaleDateString(),
+            createdAt: new Date()
+        }
     ]);
+
+    // Subscribe to Firebase posts updates
+    useEffect(() => {
+        const unsubscribe = subscribeToAllPosts((posts) => {
+            setTweets(posts);
+        });
+
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, []);
+
     return (
         <TweetContext.Provider value={[tweets, setTweets]}>
             {props.children}
         </TweetContext.Provider>
     );
-}
+};
