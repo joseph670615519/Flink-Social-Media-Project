@@ -1,88 +1,94 @@
 import React, { useState } from 'react';
 import './Register.css';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
-function Register () {
-  const [Username, setUsername] = React.useState('');
-  const [DoB, setDoB] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [pw, setPw] = React.useState('');
+function Register() {
+  const [displayName, setDisplayName] = useState('');
+  const [DoB, setDoB] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ Username validation
     const usernameRegex = /^[a-zA-Z0-9_]{5,}$/;
-    if (!usernameRegex.test(Username)) {
-      alert('Username must be at least 5 characters and can include letters, numbers, _ or -');
+    if (!usernameRegex.test(displayName)) {
+      alert('Username must be at least 5 characters and can include letters, numbers, or _');
       return;
     }
 
+    // ✅ Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       alert('Invalid email address.');
       return;
     }
 
+    // ✅ Password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    if (!passwordRegex.test(pw)) {
+    if (!passwordRegex.test(password)) {
       alert('Password must be at least 8 characters, include uppercase, lowercase, number, and special character.');
       return;
     }
 
     try {
-      const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
-      const { doc, setDoc } = await import("firebase/firestore");
-      const { auth, db } = await import("../firebase");
-
-      const userCredential = await createUserWithEmailAndPassword(auth, email, pw);
+      // 🔐 Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Set Firebase Auth display name
-      await updateProfile(user, { displayName: Username });
-
-      // Create Firestore user doc for friend system
-      await setDoc(doc(db, "users", user.uid), {
-        displayName: Username,
-        displayNameLower: Username.toLowerCase(),
-        username: Username,
-        email: email,
-        dob: DoB,
-        friends: [],
-        requestsSent: [],
-        requestsReceived: [],
-        uid: user.uid
+      // 🪪 Update Auth display name
+      await updateProfile(user, {
+        displayName: displayName,
       });
 
-      alert("Registration successful!");
-      navigate("/login");
+      // 🗃️ Create Firestore user doc for friend system
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        displayName: displayName,
+        displayNameLower: displayName.toLowerCase(),
+        email: email,
+        dateOfBirth: DoB,
+        createdAt: new Date().toISOString(),
+        friends: [],
+        friendRequests: [],
+        requestsSent: [],
+        requestsReceived: [],
+      });
+
+      alert('Registration successful!');
+      console.log('✅ Registered successfully:', user);
+      navigate('/feed');
     } catch (error) {
-      console.error(error);
-      alert("Error registering: " + error.message);
+      console.error('❌ Registration error:', error);
+      alert('Registration failed: ' + error.message);
     }
   };
 
   return (
-    <div className='sign-up'>
-      <h2>Sign up</h2>
+    <div className="sign-up">
+      <h2>Sign Up</h2>
       <form className="register-form" onSubmit={handleSubmit}>
-
-        <div className='form-group'>
-          <label>Username: </label>
+        <div className="form-group">
+          <label>Username:</label>
           <input
-            id='register-username'
+            id="register-username"
             type="text"
             placeholder="Username"
-            value={Username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
             required
           />
         </div>
 
-        <div className='form-group'>
-          <label>Date of Birth: </label>
+        <div className="form-group">
+          <label>Date of Birth:</label>
           <input
-            id='DoB'
+            id="DoB"
             type="date"
             placeholder="Date of Birth"
             value={DoB}
@@ -91,10 +97,10 @@ function Register () {
           />
         </div>
 
-        <div className='form-group'>
-          <label>Email address: </label>
+        <div className="form-group">
+          <label>Email Address:</label>
           <input
-            id='email'
+            id="email"
             type="email"
             placeholder="Email"
             value={email}
@@ -103,23 +109,23 @@ function Register () {
           />
         </div>
 
-        <div className='form-group'>
-          <label>New password: </label>
+        <div className="form-group">
+          <label>New Password:</label>
           <input
-            id='pw'
+            id="pw"
             type="password"
             placeholder="Password"
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
 
-        <button id='register-btn' type="submit">Register</button>
+        <button id="register-btn" type="submit">Register</button>
       </form>
 
       <p>
-        Already have an account? <a href="/login"><br />Log-in</a>
+        Already have an account? <a href="/login"><br />Log in</a>
       </p>
     </div>
   );

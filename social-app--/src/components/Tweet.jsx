@@ -1,22 +1,48 @@
 import './Tweet.css';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { auth } from '../firebase'; 
 import avatarImg from '../assets/FlinkAva.png';
 
 const Tweet = (props) => {
     const [likes, setLikes] = useState(props.likes);
     const [isLiked, setIsLiked] = useState(false);
 
+    const currentUser = auth.currentUser;
+    const isOwnTweet = currentUser && props.userId === currentUser.uid;
+
     const handleLike = () => {
         setLikes(isLiked ? likes - 1 : likes + 1);
         setIsLiked(!isLiked);
     }
 
-     return (
+    return (
         <div className="tweet-card">
             <div className="tweet-header">
-                <img src={props.avatar || avatarImg} alt="User" className="tweet-avatar" />
-                <div className="tweet-user-info">
-                    <strong>{props.userName || "User"}</strong>
+                <Link to={isOwnTweet ? "/me" : `/profile/${props.userId}`}>
+                    <img 
+                        src={props.avatar || avatarImg} 
+                        alt="User" 
+                        className="tweet-avatar"
+                        style={{ cursor: 'pointer' }}
+                    />
+                </Link>
+                <div className="tweet-user-info"> 
+                    <Link 
+                        to={isOwnTweet ? "/me" : `/profile/${props.userId}`}
+                        style={{ 
+                            textDecoration: 'none', 
+                            color: 'inherit',
+                            fontWeight: 'bold',
+                            display: 'block',
+                            marginBottom: '2px'
+                        }}
+                        onMouseOver={(e) => e.target.style.color = '#86c76b'}
+                        onMouseOut={(e) => e.target.style.color = 'inherit'}
+                    >
+                        {props.userName || "User"}
+                        {isOwnTweet && " (You)"} 
+                    </Link>
                     <span className="tweet-date">{props.date}</span>
                 </div>
             </div>

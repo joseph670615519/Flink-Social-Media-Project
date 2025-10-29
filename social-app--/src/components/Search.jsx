@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 function Search({ onSearch }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,12 +11,12 @@ function Search({ onSearch }) {
 
     return (
         <div className="search-container">
-            <label htmlFor="search-input" style={{ display: 'none' }}>Search Tweets</label>
+            <label htmlFor="search-input" style={{ display: 'none' }}>Search everything...</label>
             <div style={{ position: 'relative' }}>
                 <input
                     id="search-input"
                     type="text"
-                    placeholder="Search posts..."
+                    placeholder="Search posts, people, keywords..."
                     value={searchTerm}
                     onChange={handleChange}
                     className="search-input"
