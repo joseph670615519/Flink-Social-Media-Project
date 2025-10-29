@@ -15,9 +15,11 @@ export default function Profile({ user }) {
   const [editedUser, setEditedUser] = useState({
     displayName: '',
     bio: '',
-    photoURL: ''
+    photoURL: '',
+    coverPhotoURL: ''
   });
   const [uploading, setUploading] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -31,7 +33,8 @@ export default function Profile({ user }) {
             setEditedUser({
               displayName: user.displayName || '',
               bio: data.bio || 'Welcome to my profile! I just joined Flink.',
-              photoURL: user.photoURL || ''
+              photoURL: user.photoURL || '',
+              coverPhotoURL: data.coverPhotoURL || ''
             });
           }
         } catch (error) {
@@ -56,7 +59,7 @@ export default function Profile({ user }) {
     }
   };
 
-  const handleImageUpload = async (event) => {
+  const handleImageUpload = async (event, type = 'profile') => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -70,19 +73,37 @@ export default function Profile({ user }) {
       return;
     }
 
-    setUploading(true);
+    if (type === 'profile') {
+      setUploading(true);
+    } else {
+      setUploadingCover(true);
+    }
     
     try {
-      const imageRef = ref(storage, `profile-pictures/${user.uid}/${Date.now()}_${file.name}`);
+      const path = type === 'profile' 
+        ? `profile-pictures/${user.uid}/${Date.now()}_${file.name}`
+        : `cover-photos/${user.uid}/${Date.now()}_${file.name}`;
+      
+      const imageRef = ref(storage, path);
       const snapshot = await uploadBytes(imageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      setEditedUser(prev => ({...prev, photoURL: downloadURL}));
+      
+      if (type === 'profile') {
+        setEditedUser(prev => ({...prev, photoURL: downloadURL}));
+      } else {
+        setEditedUser(prev => ({...prev, coverPhotoURL: downloadURL}));
+      }
+      
       console.log('Image uploaded successfully:', downloadURL);
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image: ' + error.message);
     } finally {
-      setUploading(false);
+      if (type === 'profile') {
+        setUploading(false);
+      } else {
+        setUploadingCover(false);
+      }
     }
   };
 
@@ -104,6 +125,7 @@ export default function Profile({ user }) {
         displayName: editedUser.displayName,
         bio: editedUser.bio,
         photoURL: editedUser.photoURL || user.photoURL,
+        coverPhotoURL: editedUser.coverPhotoURL,
         updatedAt: new Date().toISOString()
       });
 
@@ -111,7 +133,8 @@ export default function Profile({ user }) {
         ...prev,
         displayName: editedUser.displayName,
         bio: editedUser.bio,
-        photoURL: editedUser.photoURL
+        photoURL: editedUser.photoURL,
+        coverPhotoURL: editedUser.coverPhotoURL
       }));
       
       setIsEditing(false);
@@ -128,6 +151,7 @@ export default function Profile({ user }) {
   const displayName = user?.displayName || 'New User';
   const email = user?.email || '';
   const avatar = editedUser.photoURL || user?.photoURL || avatarImg;
+  const coverPhoto = editedUser.coverPhotoURL || userData?.coverPhotoURL;
   const bio = userData?.bio || 'Welcome to my profile! I just joined Flink.';
   
   const userJoinDate = userData?.createdAt 
@@ -279,156 +303,225 @@ export default function Profile({ user }) {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <div className="cover-photo-container" style={{ 
-          background: 'linear-gradient(135deg, #86c76b, #6bbf4e)',
-          height: '200px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '1.2rem'
-        }}>
-          <span>{displayName}'s Profile</span>
+        <div 
+          className="cover-photo-container" 
+          style={{ 
+            background: coverPhoto 
+              ? `url(${coverPhoto}) center/cover`
+              : 'linear-gradient(135deg, #86c76b, #6bbf4e)',
+            height: '200px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '1.2rem',
+            position: 'relative'
+          }}
+        >
+          {!coverPhoto && <span>{displayName}'s Profile</span>}
+          
+          {isEditing && (
+            <label 
+              htmlFor="cover-photo-upload"
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                right: '10px',
+                background: 'rgba(0, 0, 0, 0.7)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '8px 16px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+              title="Change cover photo"
+            >
+              {uploadingCover ? '📤 Uploading...' : '📷 Change Cover'}
+            </label>
+          )}
         </div>
         
-        <div className="profile-info-section">
-          <div className="profile-picture-container" style={{ position: 'relative' }}>
-            <img src={avatar} alt={displayName} className="profile-picture" />
-            {isEditing && (
-              <label 
-                htmlFor="profile-picture-upload"
-                style={{
-                  position: 'absolute',
-                  bottom: '5px',
-                  right: '5px',
-                  background: '#86c76b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-                title="Change profile picture"
-              >
-                ✎
-              </label>
-            )}
-          </div>
-          
-          <div className="profile-details">
-            {isEditing ? (
-              <input
-                type="text"
-                value={editedUser.displayName}
-                onChange={(e) => setEditedUser({...editedUser, displayName: e.target.value})}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '6px',
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  marginBottom: '0.5rem'
-                }}
-                placeholder="Display Name"
-              />
-            ) : (
-              <h1>{displayName}</h1>
-            )}
-            
-            {isEditing ? (
-              <textarea
-                value={editedUser.bio}
-                onChange={(e) => setEditedUser({...editedUser, bio: e.target.value})}
-                rows="3"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical',
-                  marginBottom: '1rem'
-                }}
-                placeholder="Tell us about yourself..."
-              />
-            ) : (
-              <p className="profile-bio" style={{ 
-                marginBottom: '1rem', 
-                color: '#666',
-                fontSize: '1.1rem',
-                fontWeight: '500'
-              }}>
-                {bio}
-              </p>
-            )}
-            
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-              id="profile-picture-upload"
-              disabled={uploading}
-            />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleImageUpload(e, 'cover')}
+          style={{ display: 'none' }}
+          id="cover-photo-upload"
+          disabled={uploadingCover}
+        />
 
-            <div className="profile-actions">
-              {isEditing ? (
-                <>
-                  <button 
-                    onClick={handleSaveProfile}
-                    className="primary-btn"
-                    disabled={uploading}
-                  >
-                    {uploading ? 'Saving...' : 'Save Changes'}
-                  </button>
-                  <button 
-                    onClick={() => setIsEditing(false)}
-                    className="secondary-btn"
-                    disabled={uploading}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button 
-                    className="primary-btn" 
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit Profile
-                  </button>
-                  <button className="secondary-btn">Share Profile</button>
-                  <button 
-                    onClick={handleLogout}
-                    className="secondary-btn" 
-                    style={{background:'#ff6b6b', color: 'white', border: '1px solid #ff6b6b'}}
-                  >
-                    Logout
-                  </button>
-                </>
+        <div className="profile-info-section" style={{
+          background: 'var(--card-background)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '8px',
+          margin: '0 1rem',
+          padding: '1.5rem',
+          position: 'relative',
+          top: '-60px',
+          marginBottom: '-30px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
+            <div className="profile-picture-container" style={{ position: 'relative' }}>
+              <img 
+                src={avatar} 
+                alt={displayName} 
+                className="profile-picture" 
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '4px solid var(--card-background)'
+                }}
+              />
+              {isEditing && (
+                <label 
+                  htmlFor="profile-picture-upload"
+                  style={{
+                    position: 'absolute',
+                    bottom: '5px',
+                    right: '5px',
+                    background: '#86c76b',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '30px',
+                    height: '30px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                  title="Change profile picture"
+                >
+                  ✎
+                </label>
               )}
             </div>
-          </div>
-        </div>
+            
+            <div className="profile-details" style={{ flex: 1 }}>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedUser.displayName}
+                  onChange={(e) => setEditedUser({...editedUser, displayName: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '6px',
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    marginBottom: '1rem'
+                  }}
+                  placeholder="Display Name"
+                />
+              ) : (
+                <h1 style={{ margin: '0 0 1rem 0', fontSize: '1.5rem' }}>{displayName}</h1>
+              )}
+              
+              {isEditing ? (
+                <textarea
+                  value={editedUser.bio}
+                  onChange={(e) => setEditedUser({...editedUser, bio: e.target.value})}
+                  rows="3"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    resize: 'vertical',
+                    marginBottom: '1rem'
+                  }}
+                  placeholder="Tell us about yourself..."
+                />
+              ) : (
+                <p className="profile-bio" style={{ 
+                  margin: '0 0 1rem 0', 
+                  color: '#666',
+                  fontSize: '1.1rem',
+                  fontWeight: '500'
+                }}>
+                  {bio}
+                </p>
+              )}
+              
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, 'profile')}
+                style={{ display: 'none' }}
+                id="profile-picture-upload"
+                disabled={uploading}
+              />
 
-        <div className="profile-stats">
-          <div className="stat">
-            <strong>{myTweets.length}</strong>
-            <span>Posts</span>
+              <div className="profile-actions">
+                {isEditing ? (
+                  <>
+                    <button 
+                      onClick={handleSaveProfile}
+                      className="primary-btn"
+                      disabled={uploading || uploadingCover}
+                    >
+                      {(uploading || uploadingCover) ? 'Saving...' : 'Save Changes'}
+                    </button>
+                    <button 
+                      onClick={() => setIsEditing(false)}
+                      className="secondary-btn"
+                      disabled={uploading || uploadingCover}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      className="primary-btn" 
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit Profile
+                    </button>
+                    <button className="secondary-btn">Share Profile</button>
+                    <button 
+                      onClick={handleLogout}
+                      className="secondary-btn" 
+                      style={{background:'#ff6b6b', color: 'white', border: '1px solid #ff6b6b'}}
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="stat">
-            <strong>{friends.length}</strong>
-            <span>Friends</span>
-          </div>
-          <div className="stat">
-            <strong>0</strong>
-            <span>Photos</span>
+
+          <div className="profile-stats" style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            gap: '1rem',
+            padding: '1rem',
+            borderTop: '1px solid var(--border-color)',
+            background: 'var(--background-color)',
+            marginTop: '1.5rem'
+          }}>
+            <div className="stat">
+              <strong>{myTweets.length}</strong>
+              <span>Posts</span>
+            </div>
+            <div className="stat">
+              <strong>{friends.length}</strong>
+              <span>Friends</span>
+            </div>
+            <div className="stat">
+              <strong>0</strong>
+              <span>Photos</span>
+            </div>
           </div>
         </div>
       </div>
@@ -439,13 +532,14 @@ export default function Profile({ user }) {
           padding: '1.5rem',
           borderRadius: '8px',
           border: '1px solid var(--border-color)',
-          marginBottom: '1rem'
+          margin: '1rem',
+          marginTop: '0'
         }}>
-          <h3>Profile Picture</h3>
+          <h3>Upload Photos</h3>
           <p style={{ color: '#666', marginBottom: '1rem', fontSize: '14px' }}>
-            Click the edit icon on your profile picture to upload a new image
+            Click the edit icons to upload profile picture and cover photo
           </p>
-          {uploading && (
+          {(uploading || uploadingCover) && (
             <div style={{ 
               padding: '1rem', 
               background: '#f8fff4', 
@@ -453,44 +547,109 @@ export default function Profile({ user }) {
               border: '1px solid #86c76b',
               marginBottom: '1rem'
             }}>
-              Uploading image...
+              {uploading && 'Uploading profile picture...'}
+              {uploadingCover && 'Uploading cover photo...'}
+              {uploading && uploadingCover && 'Uploading both images...'}
             </div>
           )}
         </div>
       )}
 
-      <div className="profile-tabs">
-        <button 
-          className={`tab ${activeTab === 'posts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('posts')}
-        >
-          Posts
-        </button>
-        <button 
-          className={`tab ${activeTab === 'about' ? 'active' : ''}`}
-          onClick={() => setActiveTab('about')}
-        >
-          About
-        </button>
-        <button 
-          className={`tab ${activeTab === 'friends' ? 'active' : ''}`}
-          onClick={() => setActiveTab('friends')}
-        >
-          Friends
-        </button>
-        <button 
-          className={`tab ${activeTab === 'photos' ? 'active' : ''}`}
-          onClick={() => setActiveTab('photos')}
-        >
-          Photos
-        </button>
+      <div className="profile-tabs" style={{
+        background: 'var(--card-background)',
+        borderRadius: '8px',
+        border: '1px solid var(--border-color)',
+        margin: '1rem',
+        overflow: 'hidden'
+      }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)' }}>
+          <button 
+            className={`tab ${activeTab === 'posts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('posts')}
+            style={{
+              background: activeTab === 'posts' ? 'var(--background-color)' : 'none',
+              border: 'none',
+              padding: '1rem 1.5rem',
+              cursor: 'pointer',
+              color: activeTab === 'posts' ? 'var(--primary-color)' : 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s',
+              borderBottom: activeTab === 'posts' ? '3px solid var(--primary-color)' : '3px solid transparent'
+            }}
+          >
+            Posts
+          </button>
+          <button 
+            className={`tab ${activeTab === 'about' ? 'active' : ''}`}
+            onClick={() => setActiveTab('about')}
+            style={{
+              background: activeTab === 'about' ? 'var(--background-color)' : 'none',
+              border: 'none',
+              padding: '1rem 1.5rem',
+              cursor: 'pointer',
+              color: activeTab === 'about' ? 'var(--primary-color)' : 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s',
+              borderBottom: activeTab === 'about' ? '3px solid var(--primary-color)' : '3px solid transparent'
+            }}
+          >
+            About
+          </button>
+          <button 
+            className={`tab ${activeTab === 'friends' ? 'active' : ''}`}
+            onClick={() => setActiveTab('friends')}
+            style={{
+              background: activeTab === 'friends' ? 'var(--background-color)' : 'none',
+              border: 'none',
+              padding: '1rem 1.5rem',
+              cursor: 'pointer',
+              color: activeTab === 'friends' ? 'var(--primary-color)' : 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s',
+              borderBottom: activeTab === 'friends' ? '3px solid var(--primary-color)' : '3px solid transparent'
+            }}
+          >
+            Friends
+          </button>
+          <button 
+            className={`tab ${activeTab === 'photos' ? 'active' : ''}`}
+            onClick={() => setActiveTab('photos')}
+            style={{
+              background: activeTab === 'photos' ? 'var(--background-color)' : 'none',
+              border: 'none',
+              padding: '1rem 1.5rem',
+              cursor: 'pointer',
+              color: activeTab === 'photos' ? 'var(--primary-color)' : 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s',
+              borderBottom: activeTab === 'photos' ? '3px solid var(--primary-color)' : '3px solid transparent'
+            }}
+          >
+            Photos
+          </button>
+        </div>
       </div>
 
-      <div className="tab-content">
+      <div className="tab-content" style={{
+        background: 'var(--card-background)',
+        borderRadius: '8px',
+        border: '1px solid var(--border-color)',
+        margin: '1rem',
+        padding: '1rem',
+        minHeight: '200px'
+      }}>
         {renderTabContent()}
       </div>
 
-      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+      <div style={{ marginTop: '2rem', textAlign: 'center', padding: '1rem' }}>
         <Link to="/feed" style={{ color: '#86c76b', textDecoration: 'none' }}>
           ← Back to Feed
         </Link>
