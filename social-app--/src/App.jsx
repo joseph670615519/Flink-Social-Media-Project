@@ -50,6 +50,33 @@ function Logo({ onRefresh }) {
   );
 }
 
+function AppLayout({ children, user, searchTerm, onSearch, onRefreshFeed }) {
+  return (
+    <div className="app-layout">
+
+      <header className="app-header">
+        <div className="header-content">
+          <div className="header-left">
+            <Logo onRefresh={onRefreshFeed} />
+          </div>
+          
+          <div className="header-center">
+            <Search onSearch={onSearch} />
+          </div>
+          
+          <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <Chat />
+            <Notification />
+          </div>
+        </div>
+      </header>
+
+      {/* Main content area */}
+      {children}
+    </div>
+  );
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -92,6 +119,7 @@ function App() {
     <TweetProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public routes */}
           <Route 
             path="/login" 
             element={!user ? <LogIn /> : <Navigate to="/feed" replace />} 
@@ -101,29 +129,17 @@ function App() {
             element={!user ? <Register /> : <Navigate to="/feed" replace />} 
           />
           
+          {/* Authenticated routes */}
           <Route 
             path="/feed" 
             element={
               user ? (
-                <div className="app-layout">
-                  <header className="app-header">
-                    <div className="header-content">
-                      <div className="header-left">
-                        <Logo onRefresh={handleRefreshFeed} />
-                      </div>
-                      
-                      <div className="header-center">
-                        <Search onSearch={handleSearch} />
-                      </div>
-                      
-                      <div className="header-right">
-                        <Chat /> 
-                        <Notification />
-                      </div>
-                    </div>
-                  </header>
-
-                  {/* Main Layout Container */}
+                <AppLayout 
+                  user={user} 
+                  searchTerm={searchTerm} 
+                  onSearch={handleSearch}
+                  onRefreshFeed={handleRefreshFeed}
+                >
                   <div className="layout-container">
                     <aside className="sidebar left-sidebar">
                       <Nav user={user} />
@@ -142,7 +158,7 @@ function App() {
                       <List user={user} />
                     </aside>
                   </div>
-                </div>
+                </AppLayout>
               ) : (
                 <Navigate to="/login" replace />
               )
@@ -151,12 +167,38 @@ function App() {
           
           <Route 
             path="/me" 
-            element={user ? <Profile user={user} /> : <Navigate to="/login" replace />} 
+            element={
+              user ? (
+                <AppLayout 
+                  user={user} 
+                  searchTerm={searchTerm} 
+                  onSearch={handleSearch}
+                  onRefreshFeed={handleRefreshFeed}
+                >
+                  <Profile user={user} />
+                </AppLayout>
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            } 
           />
           
           <Route 
             path="/profile/:userId" 
-            element={user ? <UserProfile /> : <Navigate to="/login" replace />} 
+            element={
+              user ? (
+                <AppLayout 
+                  user={user} 
+                  searchTerm={searchTerm} 
+                  onSearch={handleSearch}
+                  onRefreshFeed={handleRefreshFeed}
+                >
+                  <UserProfile />
+                </AppLayout>
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            } 
           />
           
           <Route 
