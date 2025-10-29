@@ -117,7 +117,7 @@ function App() {
                       </div>
                       
                       <div className="header-right">
-                        <Chat /> {/* CHAT ADDED HERE */}
+                        <Chat /> 
                         <Notification />
                       </div>
                     </div>
@@ -136,7 +136,6 @@ function App() {
                         user={user} 
                         searchTerm={searchTerm} 
                       />
-                      {/* Footer removed */}
                     </main>
           
                     <aside className="sidebar right-sidebar">

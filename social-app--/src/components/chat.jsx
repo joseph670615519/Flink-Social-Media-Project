@@ -76,7 +76,7 @@ function chat() {
   };
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }} ref={chatRef}>
+    <div style={{ position: 'relative', display: 'inline-block', marginRight: '10px' }} ref={chatRef}>
       {/* Chat Button */}
       <button 
         style={{
