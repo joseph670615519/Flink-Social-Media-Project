@@ -24,16 +24,22 @@ export async function ensureUserDoc() {
   if (!user) return;
 
   const ref = doc(db, "users", user.uid);
-  await setDoc(
-    ref,
-    {
-      uid: user.uid,
-      email: user.email || "",
-      displayName: user.displayName || "Anonymous",
-      friends: [],
-      requestsSent: [],
-      requestsReceived: []
-    },
-    { merge: true }
-  );
+
+  // Only create the doc if it doesn't exist yet
+  const { getDoc } = await import("firebase/firestore");
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    // Don't overwrite existing data
+    return;
+  }
+
+  await setDoc(ref, {
+    uid: user.uid,
+    email: user.email || "",
+    displayName: user.displayName || "Anonymous",
+    displayNameLower: (user.displayName || "anonymous").toLowerCase(),
+    friends: [],
+    requestsSent: [],
+    requestsReceived: []
+  });
 }
