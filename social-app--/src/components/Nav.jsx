@@ -4,7 +4,7 @@ import { TweetContext } from './TweetContext';
 import avatarImg from '../assets/FlinkAva.png';
 
 const Nav = ({ user }) => {
-  const [tweets] = useContext(TweetContext);
+  const { tweets } = useContext(TweetContext);
 
   return (
     <div className="nav-container"> 

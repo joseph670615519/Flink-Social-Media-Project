@@ -9,7 +9,7 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function Profile({ user }) {
-  const [tweets = []] = useContext(TweetContext) || [];
+  const { tweets, setTweets } = useContext(TweetContext);
   const [activeTab, setActiveTab] = useState('posts');
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({

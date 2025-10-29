@@ -3,7 +3,7 @@ import { TweetContext } from './TweetContext';
 import Tweet from './Tweet';
 
 const MainFeed = ({ user, searchTerm }) => {
-  const [tweets, setTweets] = useContext(TweetContext);
+  const { tweets } = useContext(TweetContext);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -17,12 +17,19 @@ const MainFeed = ({ user, searchTerm }) => {
     refreshData();
   }, []);
 
-  const filteredTweets = tweets.filter(tweet => 
-    searchTerm === '' || 
-    tweet.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tweet.message?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tweet.userName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Safe filtering with null checks
+  const filteredTweets = tweets.filter(tweet => {
+    if (!tweet) return false;
+    
+    const searchLower = searchTerm?.toLowerCase() || '';
+    if (!searchLower) return true;
+
+    return (
+      tweet.title?.toLowerCase().includes(searchLower) ||
+      tweet.message?.toLowerCase().includes(searchLower) ||
+      tweet.userName?.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="main-feed">
@@ -52,18 +59,32 @@ const MainFeed = ({ user, searchTerm }) => {
         </div>
       )}
       
-      {filteredTweets.map(tweet => (
-        <Tweet 
-          key={tweet.id} 
-          title={tweet.title} 
-          message={tweet.message} 
-          likes={tweet.likes}
-          userId={tweet.userId}
-          date={tweet.date}
-          userName={tweet.userName}
-          avatar={tweet.userAvatar}
-        />
-      ))}
+      {filteredTweets.map(tweet => {
+        // Skip invalid tweets
+        if (!tweet || !tweet.id) return null;
+
+        return (
+          <Tweet 
+            key={tweet.id} 
+            id={tweet.id}
+            tweetId={tweet.id}
+            title={tweet.title || ''} 
+            message={tweet.message || ''} 
+            likes={tweet.likes || 0}
+            userId={tweet.userId || 'unknown'}
+            date={tweet.date || 'Unknown date'}
+            userName={tweet.userName || 'Unknown User'}
+            avatar={tweet.userAvatar}
+            imageURL={tweet.imageURL}
+            isRetweet={tweet.isRetweet || false}
+            originalTweetId={tweet.originalTweetId}
+            originalUserId={tweet.originalUserId}
+            originalUserName={tweet.originalUserName}
+            originalUserAvatar={tweet.originalUserAvatar}
+            originalDate={tweet.originalDate}
+          />
+        );
+      })}
       
       {searchTerm && filteredTweets.length === 0 && (
         <div style={{ 
@@ -72,6 +93,16 @@ const MainFeed = ({ user, searchTerm }) => {
           color: '#666'
         }}>
           No results found for "{searchTerm}"
+        </div>
+      )}
+
+      {!searchTerm && filteredTweets.length === 0 && (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem',
+          color: '#666'
+        }}>
+          No posts yet. Be the first to post something!
         </div>
       )}
     </div>

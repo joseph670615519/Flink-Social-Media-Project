@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 const AddTweet = () => {
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
-    const [tweets, setTweets] = useContext(TweetContext);
+    const { tweets, setTweets } = useContext(TweetContext);
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef(null);

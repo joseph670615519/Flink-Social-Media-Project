@@ -6,7 +6,7 @@ function Notification() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef(null);
-  const [tweets] = useContext(TweetContext) || [];
+  const { tweets, setTweets } = useContext(TweetContext);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

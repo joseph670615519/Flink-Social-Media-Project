@@ -22,13 +22,12 @@ import { onAuthStateChanged } from "firebase/auth";
 
 export default function UserProfile() {
   const { userId } = useParams();
-  const [tweets] = useContext(TweetContext) || [[]];
+  const { tweets, setTweets } = useContext(TweetContext);
   const [userData, setUserData] = useState(null);
   const [status, setStatus] = useState("none");
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Resolve UID whether it's name or ID
   async function resolveTargetUid(idFromUrl) {
     if (!idFromUrl) return null;
 
@@ -54,7 +53,6 @@ export default function UserProfile() {
     return null;
   }
 
-  // 🧠 Load friendship status live
   useEffect(() => {
     let unsubAuth, unsubCurrent, unsubTarget;
 
@@ -99,7 +97,6 @@ export default function UserProfile() {
     };
   }, [userId]);
 
-  // 🧑‍🤝‍🧑 Friend list live update
   useEffect(() => {
     if (!auth.currentUser) return;
 
@@ -127,7 +124,6 @@ export default function UserProfile() {
     return () => unsub();
   }, []);
 
-  // 🧾 Load viewed user's data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
