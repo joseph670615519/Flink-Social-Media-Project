@@ -7,7 +7,7 @@ import { auth } from './firebase.js';
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 
-signInWithEmailAndPassword(auth, "friendstesting1@gmail.com", "123456")
+signInWithEmailAndPassword(auth, "joetest01@yahoo.com", "Joetest01!")
   .then(() => {
     console.log("✅ Logged in as Tester1");
   })
