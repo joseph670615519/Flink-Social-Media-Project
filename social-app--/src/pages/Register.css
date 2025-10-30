@@ -1,0 +1,75 @@
+.sign-up{
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 370px;
+    height: 370px;
+    margin: auto;
+    margin-top: 70px;
+    padding: 20px;  
+}
+
+h2{
+    text-align: center;
+    margin-top: 2px;
+}
+
+label{
+    font-size: 13px;
+}
+
+input{
+    border-radius: 5px;
+    border: 1px solid gray;
+    margin-top: 5px;
+}
+
+#register-username{
+    height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    width: 350px;
+}
+
+.form-group{
+    margin-top: 3px;
+    text-align: left;
+    margin-left: 8px;
+}
+
+#DoB{
+    height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    width: 350px;
+}
+
+#email{
+    height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    width: 350px;
+}
+
+#pw{
+    height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    width: 350px;
+}
+
+#register-btn{
+    width: 85px;
+    height: 35px;
+    color: white;
+    font-size: 13px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+p{
+    text-align: center;
+    font-size: 12px;
+    position: relative;
+    bottom: 10px;
+}

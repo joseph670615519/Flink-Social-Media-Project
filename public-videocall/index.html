@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Video Call</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Video Chat 📹</h1>
+
+        <div class="videos-container">
+            <div class="video-card">
+                <h2><i class="fa-solid fa-user"></i> I</h2>
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+            <div class="video-card">
+                <h2><i class="fa-solid fa-desktop"></i> You</h2>
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+        </div>
+
+        <div id="controls" class="controls">
+            <button id="startButton" class="btn-start"><i class="fa-solid fa-video"></i> Start Camera</button>
+            <button id="callButton" class="btn-call" disabled><i class="fa-solid fa-phone"></i> Call</button>
+            <button id="hangupButton" class="btn-hangup" disabled><i class="fa-solid fa-phone-slash"></i> Hang Up</button>
+        </div>
+    </div>
+
+    <div id="incomingCall" class="incoming-call-container hidden">
+        <div class="incoming-call-box">
+            <h3><i class="fa-solid fa-ring"></i> Incoming Call...</h3>
+            <p>You have a call from a user.</p>
+            <div class="call-actions">
+                <button id="acceptButton" class="btn-accept"><i class="fa-solid fa-check"></i> Accept</button>
+                <button id="declineButton" class="btn-decline"><i class="fa-solid fa-xmark"></i> Decline</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+
+</body>
+</html>
