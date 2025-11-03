@@ -18,9 +18,9 @@ const AddTweet = () => {
 
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
-        console.log('📸 File picker opened, selected file:', file);
-        console.log('📸 Input element:', e.target);
-        console.log('📸 Files array:', e.target.files);
+        console.log('File picker opened, selected file:', file);
+        console.log('Input element:', e.target);
+        console.log('Files array:', e.target.files);
         
         if (file) {
             // Use debug helper
@@ -34,7 +34,7 @@ const AddTweet = () => {
             
             if (!isValidType) {
                 alert(`Please select a valid image file (JPEG, PNG, GIF, WEBP)\nSelected: ${file.type || 'unknown type'}`);
-                console.error('❌ Invalid file:', {
+                console.error('Invalid file:', {
                     type: file.type,
                     extension: fileExtension,
                     name: file.name
@@ -45,11 +45,11 @@ const AddTweet = () => {
             // Check file size
             if (file.size > 5 * 1024 * 1024) {
                 alert('Image must be smaller than 5MB');
-                console.error('❌ File too large:', file.size);
+                console.error('File too large:', file.size);
                 return;
             }
             
-            console.log('✅ File accepted for upload:', {
+            console.log('File accepted for upload:', {
                 name: file.name,
                 type: file.type,
                 size: file.size,
@@ -80,13 +80,13 @@ const AddTweet = () => {
         }
 
         setUploading(true);
-        console.log('🚀 Starting tweet creation process...');
+        console.log('Starting tweet creation process...');
 
         try {
             let imageURL = null;
 
             if (image) {
-                console.log('📤 Starting image upload:', {
+                console.log('Starting image upload:', {
                     name: image.name,
                     size: image.size,
                     type: image.type,
@@ -100,23 +100,23 @@ const AddTweet = () => {
                     const sanitizedName = `${timestamp}_${image.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
                     const imagePath = `tweet-images/${currentUser.uid}/${sanitizedName}`;
                     
-                    console.log('📁 Upload path:', imagePath);
-                    console.log('👤 User:', currentUser.uid);
+                    console.log('Upload path:', imagePath);
+                    console.log('User:', currentUser.uid);
                     
                     const imageRef = ref(storage, imagePath);
-                    console.log('🔗 Storage reference created successfully');
+                    console.log('Storage reference created successfully');
                     
                     // Create proper file with correct MIME type
                     let uploadFile = image;
                     if (fileExtension === 'jpg' && !image.type.includes('jpeg')) {
-                        console.log('🔧 Fixing JPG MIME type from', image.type, 'to image/jpeg');
+                        console.log('Fixing JPG MIME type from', image.type, 'to image/jpeg');
                         uploadFile = new File([image], sanitizedName, { 
                             type: 'image/jpeg',
                             lastModified: image.lastModified 
                         });
                     }
                     
-                    console.log('⬆️ Starting Firebase upload...');
+                    console.log('Starting Firebase upload...');
                     
                     // Add timeout for upload
                     const uploadPromise = uploadBytes(imageRef, uploadFile);
@@ -125,19 +125,19 @@ const AddTweet = () => {
                     );
                     
                     const snapshot = await Promise.race([uploadPromise, timeoutPromise]);
-                    console.log('✅ Firebase upload successful:', snapshot.metadata);
+                    console.log('Firebase upload successful:', snapshot.metadata);
                     
-                    console.log('🔗 Getting download URL...');
+                    console.log('Getting download URL...');
                     const urlPromise = getDownloadURL(snapshot.ref);
                     const urlTimeoutPromise = new Promise((_, reject) =>
                         setTimeout(() => reject(new Error('URL timeout after 10 seconds')), 10000)
                     );
                     
                     imageURL = await Promise.race([urlPromise, urlTimeoutPromise]);
-                    console.log('✅ Download URL obtained:', imageURL.substring(0, 100) + '...');
+                    console.log('Download URL obtained:', imageURL.substring(0, 100) + '...');
                     
                 } catch (uploadError) {
-                    console.error('❌ Firebase Storage upload failed:', {
+                    console.error('Firebase Storage upload failed:', {
                         error: uploadError,
                         code: uploadError.code,
                         message: uploadError.message,
@@ -145,22 +145,22 @@ const AddTweet = () => {
                     });
                     
                     // Fallback: Base64 encoding (works for smaller images)
-                    console.log('🔄 Attempting Base64 fallback...');
+                    console.log('Attempting Base64 fallback...');
                     try {
                         imageURL = await new Promise((resolve, reject) => {
                             const reader = new FileReader();
                             reader.onload = (e) => {
-                                console.log('✅ Base64 conversion successful');
+                                console.log('Base64 conversion successful');
                                 resolve(e.target.result);
                             };
                             reader.onerror = (e) => {
-                                console.error('❌ Base64 conversion failed:', e);
+                                console.error('Base64 conversion failed:', e);
                                 reject(e);
                             };
                             reader.readAsDataURL(image);
                         });
                     } catch (base64Error) {
-                        console.error('❌ Both upload methods failed:', base64Error);
+                        console.error('Both upload methods failed:', base64Error);
                         alert('Image upload failed. Please try a smaller image or different format.');
                         setUploading(false);
                         return;
@@ -168,7 +168,7 @@ const AddTweet = () => {
                 }
             }
 
-            console.log('💾 Saving tweet to Firestore...');
+            console.log('Saving tweet to Firestore...');
             
             // Get user profile data from Firestore for updated avatar
             let userAvatar = currentUser.photoURL;
@@ -180,7 +180,7 @@ const AddTweet = () => {
                     const userData = userDoc.data();
                     userAvatar = userData.photoURL || currentUser.photoURL;
                     userName = userData.displayName || currentUser.displayName || currentUser.email;
-                    console.log('📸 Using updated profile data for tweet');
+                    console.log('Using updated profile data for tweet');
                 }
             } catch (error) {
                 console.warn('Could not load user profile, using auth data:', error);
@@ -199,7 +199,7 @@ const AddTweet = () => {
                 createdAt: serverTimestamp(),
                 comments: [] // Initialize comments array
             });
-            console.log('✅ Tweet saved with ID:', docRef.id);
+            console.log('Tweet saved with ID:', docRef.id);
 
             const newTweet = { 
                 title, 
@@ -215,11 +215,11 @@ const AddTweet = () => {
                 comments: []
             };
             
-            console.log('🔄 Adding tweet to local state...');
+            console.log('Adding tweet to local state...');
             const updatedTweets = [...tweets, newTweet];
             setTweets(updatedTweets);
             
-            // ✅ Track post creation
+            // Track post creation
             try {
                 trackPostCreate();
             } catch (trackError) {
@@ -227,7 +227,7 @@ const AddTweet = () => {
             }
             
             // Reset form
-            console.log('🧹 Resetting form...');
+            console.log('Resetting form...');
             setTitle('');
             setMessage('');
             setImage(null);
@@ -235,11 +235,11 @@ const AddTweet = () => {
                 fileInputRef.current.value = '';
             }
             
-            console.log('🎉 Tweet creation completed successfully!');
+            console.log('Tweet creation completed successfully!');
             alert('Tweet posted successfully!');
             
         } catch (error) {
-            console.error('❌ Error saving tweet:', {
+            console.error('Error saving tweet:', {
                 error: error,
                 message: error.message,
                 code: error.code,
@@ -313,7 +313,16 @@ const AddTweet = () => {
                             gap: '0.5rem'
                         }}
                     >
-                        📷 Add a photo
+                        <img 
+                            src="https://cdn-icons-png.flaticon.com/512/54/54799.png" 
+                            alt="Camera"
+                            style={{
+                                width: '16px',
+                                height: '16px',
+                                marginRight: '6px'
+                            }}
+                        />
+                        Add a photo
                     </button>
                     
                     {image && (
@@ -327,7 +336,7 @@ const AddTweet = () => {
                             justifyContent: 'space-between'
                         }}>
                             <span style={{ fontSize: '13px', color: '#495057', fontWeight: '500' }}>
-                                ✅ {image.name}
+                                {image.name}
                             </span>
                             {!uploading && (
                                 <button 
@@ -344,7 +353,7 @@ const AddTweet = () => {
                                         fontWeight: '500'
                                     }}
                                 >
-                                    ✕ Remove
+                                    Remove
                                 </button>
                             )}
                         </div>

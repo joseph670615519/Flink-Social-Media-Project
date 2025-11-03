@@ -14,9 +14,9 @@ const CommentSection = ({ tweetId, comments = [], onClose }) => {
     const { addComment, tweets } = useContext(TweetContext);
 
     // Debug: Log the tweetId received
-    console.log('🎯 CommentSection received tweetId:', tweetId);
-    console.log('🎯 tweetId type:', typeof tweetId);
-    console.log('🎯 Is valid?', tweetId && tweetId !== 'unknown');
+    console.log('CommentSection received tweetId:', tweetId);
+    console.log('tweetId type:', typeof tweetId);
+    console.log('Is valid?', tweetId && tweetId !== 'unknown');
 
     // Listen to auth state changes
     useEffect(() => {
@@ -44,7 +44,7 @@ const CommentSection = ({ tweetId, comments = [], onClose }) => {
         setPosting(true);
         
         try {
-            console.log('🚀 Starting comment submission...');
+            console.log('Starting comment submission...');
             console.log('User:', user.uid, user.displayName || user.email);
             console.log('Tweet ID received:', tweetId);
             console.log('Comment text:', commentText.trim());
@@ -57,29 +57,29 @@ const CommentSection = ({ tweetId, comments = [], onClose }) => {
 
             // Debug: Check if tweet exists in local tweets array
             const localTweet = tweets.find(t => t.id === tweetId);
-            console.log('🔍 Local tweet found:', localTweet ? 'YES' : 'NO');
+            console.log('Local tweet found:', localTweet ? 'YES' : 'NO');
             if (localTweet) {
-                console.log('🔍 Local tweet data:', localTweet.title || localTweet.message);
+                console.log('Local tweet data:', localTweet.title || localTweet.message);
             }
 
         // Validate tweetId first
         if (!tweetId || tweetId === 'unknown') {
-            console.error('❌ Invalid tweetId:', tweetId);
+            console.error('Invalid tweetId:', tweetId);
             alert('Error: Cannot find tweet ID. Please try refreshing the page.');
             return;
         }            // Direct Firestore approach
             const tweetRef = doc(db, 'tweets', tweetId);
-            console.log('📄 Getting tweet document...');
+            console.log('Getting tweet document...');
             
             const tweetSnap = await getDoc(tweetRef);
             if (!tweetSnap.exists()) {
-                console.error('❌ Tweet not found:', tweetId);
+                console.error('Tweet not found:', tweetId);
                 throw new Error('Tweet not found');
             }
             
             const tweetData = tweetSnap.data();
-            console.log('✅ Tweet found:', tweetData.title || tweetData.message);
-            console.log('📝 Adding comment...');
+            console.log('Tweet found:', tweetData.title || tweetData.message);
+            console.log('Adding comment...');
             
             const now = new Date();
             const newComment = {
@@ -93,19 +93,19 @@ const CommentSection = ({ tweetId, comments = [], onClose }) => {
                 date: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
             
-            console.log('💬 Comment object created:', newComment);
+            console.log('Comment object created:', newComment);
             
             // Add the comment
-            console.log('💾 Saving to Firestore...');
+            console.log('Saving to Firestore...');
             await updateDoc(tweetRef, {
                 comments: arrayUnion(newComment)
             });
             
-            console.log('✅ Comment saved successfully!');
+            console.log('Comment saved successfully!');
             
             // Create notification if not own post
             if (tweetData.userId !== user.uid) {
-                console.log('🔔 Creating notification for post owner:', tweetData.userId);
+                console.log('Creating notification for post owner:', tweetData.userId);
                 try {
                     await createNotification(
                         tweetData.userId,
@@ -115,16 +115,16 @@ const CommentSection = ({ tweetId, comments = [], onClose }) => {
                         'commented on your post',
                         tweetId
                     );
-                    console.log('✅ Notification created successfully!');
+                    console.log('Notification created successfully!');
                 } catch (notifError) {
-                    console.error('❌ Notification failed:', notifError);
+                    console.error('Notification failed:', notifError);
                 }
             } else {
-                console.log('⏭️ Skipping notification (own post)');
+                console.log('Skipping notification (own post)');
             }
             
             setCommentText('');
-            console.log('🎉 Comment process completed!');
+            console.log('Comment process completed!');
             // Reload the page to see the comment
             window.location.reload();
         } catch (error) {

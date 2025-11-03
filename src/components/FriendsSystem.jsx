@@ -461,7 +461,7 @@ const FriendsSystem = () => {
                 color: '#666',
                 padding: '40px'
               }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}></div>
                 <p>Search for people to add as friends</p>
               </div>
             ) : searchUsers.length === 0 ? (

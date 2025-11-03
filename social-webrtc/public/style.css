@@ -83,7 +83,7 @@ video {
 .btn-hangup { background-color: #e94560; }
 .btn-hangup:hover:not(:disabled) { background-color: #c73149; transform: translateY(-2px); }
 
-/* --- สไตล์ของหน้าจอรับสาย --- */
+/* --- Incoming call screen styles --- */
 
 .hidden {
     display: none !important;

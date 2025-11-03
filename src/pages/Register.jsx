@@ -65,7 +65,7 @@ function Register() {
       console.log('Registered successfully:', user);
       navigate('/feed');
     } catch (error) {
-      console.error('❌ Registration error:', error);
+      console.error('Registration error:', error);
       alert('Registration failed: ' + error.message);
     }
   };
@@ -91,7 +91,18 @@ function Register() {
   return (
     <div className="sign-up">
       <div className="flink-header">
-        <div className="flink-logo">✨ Flink</div>
+        <div className="flink-logo">
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/2190/2190552.png" 
+            alt="Flink Logo" 
+            style={{
+              width: '40px',
+              height: '40px',
+              marginRight: '12px'
+            }}
+          />
+          Flink
+        </div>
         <p>Join the Flink community</p>
       </div>
       
@@ -103,7 +114,7 @@ function Register() {
           onClick={handleGoogleSignUp}
           disabled={loading}
         >
-          {loading ? '🔄 Signing up...' : '🔍 Sign up with Google'}
+          {loading ? 'Signing up...' : 'Sign up with Google'}
         </button>
         
         <div className="divider">or</div>

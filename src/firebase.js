@@ -61,7 +61,7 @@ setPersistence(auth, browserLocalPersistence)
     console.log("Auth persistence enabled");
   })
   .catch((error) => {
-    console.error("❌ Error setting persistence:", error);
+    console.error("Error setting persistence:", error);
   });
 
 // ----------------------------

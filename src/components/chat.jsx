@@ -82,24 +82,32 @@ function chat() {
         style={{
           background: '#f0f2f5',
           border: 'none',
-          padding: '8px',
+          padding: '10px',
           borderRadius: '50%',
           cursor: 'pointer',
-          fontSize: '18px',
-          width: '40px',
-          height: '40px',
+          width: '44px',
+          height: '44px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           transition: 'background-color 0.2s',
-          marginLeft: '10px'
+          marginLeft: '10px',
+          position: 'relative',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
         }}
         onClick={() => setShowChatList(!showChatList)}
         onMouseOver={(e) => e.target.style.background = '#e4e6eb'}
         onMouseOut={(e) => e.target.style.background = '#f0f2f5'}
         title="Chat with friends"
       >
-        💬
+        <img 
+          src="https://cdn-icons-png.flaticon.com/512/134/134718.png" 
+          alt="Chat"
+          style={{ 
+            width: '20px', 
+            height: '20px'
+          }}
+        />
         {onlineFriends.length > 0 && (
           <span style={{
             position: 'absolute',

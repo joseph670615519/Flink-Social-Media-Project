@@ -296,7 +296,7 @@ export default function UserProfile() {
                   fontSize: "0.9rem",
                 }}
               >
-                ❤️ {t.likes || 0} likes
+                 {t.likes || 0} likes
               </div>
             </div>
           ))

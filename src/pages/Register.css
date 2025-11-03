@@ -18,6 +18,9 @@
     font-weight: bold;
     color: white;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .flink-header p {

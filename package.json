@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "social-app--",
   "private": true,
   "version": "0.0.0",
@@ -14,7 +13,9 @@
     "firebase": "^12.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^6.30.1"
+    "react-router-dom": "^6.30.1",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
@@ -27,20 +28,5 @@
     "globals": "^16.3.0",
     "react-router-dom": "^7.9.4",
     "vite": "^7.1.5"
-=======
-  "name": "social-webrtc",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^5.1.0",
-    "socket.io": "^4.8.1"
->>>>>>> 5e6e56acc20926128b99b43743e27dc47f254f09
   }
 }

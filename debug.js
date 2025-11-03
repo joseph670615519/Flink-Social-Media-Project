@@ -101,7 +101,7 @@ window.FlinkDebug = {
     const originalError = console.error;
     console.error = function(...args) {
       if (args.some(arg => String(arg).includes('Firebase') || String(arg).includes('firestore'))) {
-        console.log('🔥 Firebase Error Detected:', ...args);
+        console.log('Firebase Error Detected:', ...args);
       }
       originalError.apply(console, args);
     };
@@ -110,7 +110,7 @@ window.FlinkDebug = {
 };
 
 // Auto-run basic checks
-console.log('🚀 Flink Debug Helper Loaded');
+console.log('Flink Debug Helper Loaded');
 console.log('Available commands:');
 console.log('- FlinkDebug.checkAuth()');
 console.log('- FlinkDebug.testNotification()'); 

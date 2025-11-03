@@ -27,7 +27,7 @@ const Nav = ({ user }) => {
       const userData = userDoc.data();
       
       if (userData) {
-        console.log('📸 Loading Nav profile photo from Firestore');
+        console.log('Loading Nav profile photo from Firestore');
         setUserProfile(userData);
       }
     } catch (error) {
@@ -71,11 +71,21 @@ const Nav = ({ user }) => {
 
       <div className="nav-menu">
         <Link to="/feed" className="nav-item">
-          <span className="nav-icon">🏠</span>
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" 
+            alt="Home"
+            className="nav-icon"
+            style={{ width: '20px', height: '20px' }}
+          />
           <span>Home</span>
         </Link>
         <Link to="/friends" className="nav-item">
-          <span className="nav-icon">👥</span>
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" 
+            alt="Friends"
+            className="nav-icon"
+            style={{ width: '20px', height: '20px' }}
+          />
           <span>Friends</span>
         </Link>
       </div>

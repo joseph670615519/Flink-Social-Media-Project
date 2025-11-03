@@ -48,7 +48,19 @@ function Logo({ onRefresh }) {
         }
       }}
     >
-      <h1 className="app-logo">Flink</h1>
+      <div className="app-logo-container">
+        <img 
+          src="https://cdn-icons-png.flaticon.com/512/2190/2190552.png" 
+          alt="Flink Logo" 
+          className="app-logo-icon"
+          style={{
+            width: '32px',
+            height: '32px',
+            marginRight: '8px'
+          }}
+        />
+        <h1 className="app-logo">Flink</h1>
+      </div>
     </div>
   );
 }

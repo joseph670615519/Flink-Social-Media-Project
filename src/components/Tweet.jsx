@@ -44,7 +44,7 @@ const Tweet = (props) => {
                     
                     setLikes(tweetLikes);
                     setIsLiked(likedUsers.includes(user.uid));
-                    console.log('💖 Loaded like status for tweet:', props.id, {
+                    console.log(' Loaded like status for tweet:', props.id, {
                         likes: tweetLikes,
                         isLiked: likedUsers.includes(user.uid)
                     });
@@ -61,7 +61,7 @@ const Tweet = (props) => {
     
     // Debug delete button
     useEffect(() => {
-        console.log('🗑️ Delete button debug:', {
+        console.log(' Delete button debug:', {
             user: user?.uid,
             tweetUserId: props.userId,
             isOwnTweet,
@@ -108,7 +108,7 @@ const Tweet = (props) => {
             const { doc, updateDoc, arrayUnion, arrayRemove, getDoc, increment } = await import('firebase/firestore');
             const { db } = await import('../firebase');
             
-            console.log('💖 Processing like for tweet:', props.id, 'by user:', user.uid);
+            console.log(' Processing like for tweet:', props.id, 'by user:', user.uid);
             
             const tweetRef = doc(db, 'tweets', props.id);
             const tweetSnap = await getDoc(tweetRef);
@@ -124,7 +124,7 @@ const Tweet = (props) => {
             
             if (likedUsers.includes(user.uid)) {
                 // Unlike
-                console.log('👍 Removing like');
+                console.log(' Removing like');
                 await updateDoc(tweetRef, {
                     likes: increment(-1),
                     likedUsers: arrayRemove(user.uid)
@@ -133,7 +133,7 @@ const Tweet = (props) => {
                 setIsLiked(false);
             } else {
                 // Like  
-                console.log('❤️ Adding like');
+                console.log(' Adding like');
                 await updateDoc(tweetRef, {
                     likes: increment(1),
                     likedUsers: arrayUnion(user.uid)
@@ -143,7 +143,7 @@ const Tweet = (props) => {
                 
                 // Create notification for post owner (only if it's not own post)
                 if (props.userId !== user.uid) {
-                    console.log('🔔 Creating like notification for:', props.userId);
+                    console.log(' Creating like notification for:', props.userId);
                     try {
                         await createNotification(
                             props.userId,
@@ -153,12 +153,12 @@ const Tweet = (props) => {
                             'liked your post',
                             props.id
                         );
-                        console.log('✅ Like notification created successfully');
+                        console.log(' Like notification created successfully');
                     } catch (notifyError) {
-                        console.error('❌ Failed to create like notification:', notifyError);
+                        console.error(' Failed to create like notification:', notifyError);
                     }
                 } else {
-                    console.log('⏭️ Skipping like notification (own post)');
+                    console.log(' Skipping like notification (own post)');
                 }
             }
         } catch (error) {
@@ -282,7 +282,7 @@ const Tweet = (props) => {
                                 e.target.style.color = '#666';
                             }}
                         >
-                            🗑️
+                    
                         </button>
                     )}
                 </div>
@@ -306,14 +306,14 @@ const Tweet = (props) => {
                         onClick={handleLike} 
                         className={`action-btn like-btn ${isLiked ? 'liked' : ''}`}
                     >
-                        ❤️ {likes}
+                         {likes}
                     </button>
                     <button 
                         className="action-btn comment-btn" 
                         onClick={() => tweetId !== 'unknown' && setShowComments(true)}
                         disabled={tweetId === 'unknown'}
                     >
-                        💬 {commentCount > 0 ? commentCount : ''}
+                         {commentCount > 0 ? commentCount : ''}
                     </button>
                     <button 
                         className={`action-btn share-btn ${hasRetweeted ? 'retweeted' : ''}`}
@@ -321,7 +321,7 @@ const Tweet = (props) => {
                         disabled={isRetweeting}
                         title={hasRetweeted ? 'Undo retweet' : 'Retweet'}
                     >
-                        {hasRetweeted ? '✓' : '↪️'} {retweetCount > 0 ? retweetCount : ''}
+                        {hasRetweeted ? '' : ''} {retweetCount > 0 ? retweetCount : ''}
                     </button>
                 </div>
             </div>

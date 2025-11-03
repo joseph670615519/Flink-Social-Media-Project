@@ -310,24 +310,30 @@ const MessagingSystem = () => {
     <div style={{ position: 'relative' }} ref={messagingRef}>
       <button
         onClick={() => setShowMessaging(!showMessaging)}
+        onMouseOver={(e) => e.target.style.background = '#e4e6eb'}
+        onMouseOut={(e) => e.target.style.background = '#f0f2f5'}
         style={{
-          background: '#f0f2f5',
-          border: 'none',
-          padding: '8px',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          fontSize: '18px',
-          width: '40px',
-          height: '40px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          padding: '8px',
+          background: '#f0f2f5',
+          border: 'none',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          width: '40px',
+          height: '40px',
           transition: 'background-color 0.2s'
         }}
-        onMouseOver={(e) => e.target.style.background = '#e4e6eb'}
-        onMouseOut={(e) => e.target.style.background = '#f0f2f5'}
       >
-        💬
+        <img 
+          src="https://cdn-icons-png.flaticon.com/512/134/134718.png" 
+          alt="Messages"
+          style={{ 
+            width: '20px', 
+            height: '20px'
+          }}
+        />
       </button>
 
       {showMessaging && (
@@ -337,10 +343,10 @@ const MessagingSystem = () => {
           right: '0',
           width: '400px',
           height: '500px',
-          background: 'white',
+          background: '#f8f9fa',
           borderRadius: '10px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          border: '1px solid #ddd',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+          border: '2px solid #e9ecef',
           zIndex: 1000,
           marginTop: '5px',
           display: 'flex',
@@ -349,9 +355,12 @@ const MessagingSystem = () => {
           {/* Header */}
           <div style={{
             padding: '12px 16px',
-            borderBottom: '1px solid #eee',
+            borderBottom: '2px solid #dee2e6',
             fontWeight: 'bold',
-            fontSize: '16px'
+            fontSize: '16px',
+            background: 'white',
+            borderTopLeftRadius: '10px',
+            borderTopRightRadius: '10px'
           }}>
             {activeConversation ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -413,7 +422,7 @@ const MessagingSystem = () => {
                 <div style={{ marginBottom: '8px' }}>
                   <input
                     type="text"
-                    placeholder="ค้นหาผู้ใช้เพื่อแชท..."
+                    placeholder="Search users to chat..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{
@@ -476,7 +485,7 @@ const MessagingSystem = () => {
                   textAlign: 'center',
                   color: '#666'
                 }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>💬</div>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}></div>
                   <h3 style={{ margin: '0 0 8px 0' }}>No messages yet</h3>
                   <p style={{ margin: 0, fontSize: '14px' }}>
                     Start a conversation with your friends
@@ -493,11 +502,15 @@ const MessagingSystem = () => {
                       gap: '12px',
                       padding: '12px 16px',
                       cursor: 'pointer',
-                      borderBottom: '1px solid #f0f0f0',
-                      transition: 'background-color 0.2s'
+                      borderBottom: '1px solid #e9ecef',
+                      transition: 'background-color 0.2s',
+                      background: 'white',
+                      margin: '2px 8px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = '#f8f9fa'}
-                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#e3f2fd'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'white'}
                   >
                     <img
                       src={conversation.otherParticipant.avatar}

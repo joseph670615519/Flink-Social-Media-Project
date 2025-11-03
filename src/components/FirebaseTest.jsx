@@ -13,9 +13,9 @@ const FirebaseTest = () => {
     const result = await testFirebaseStorage();
     
     if (result) {
-      setTestResult('✅ Firebase Storage is working correctly!');
+      setTestResult('Firebase Storage is working correctly!');
     } else {
-      setTestResult('❌ Firebase Storage test failed. Check console for details.');
+      setTestResult('Firebase Storage test failed. Check console for details.');
     }
     
     setTesting(false);
@@ -52,8 +52,8 @@ const FirebaseTest = () => {
       {testResult && (
         <div style={{ 
           padding: '8px', 
-          background: testResult.includes('✅') ? '#d4edda' : '#f8d7da',
-          color: testResult.includes('✅') ? '#155724' : '#721c24',
+          background: testResult.includes('working correctly') ? '#d4edda' : '#f8d7da',
+          color: testResult.includes('working correctly') ? '#155724' : '#721c24',
           borderRadius: '4px',
           fontSize: '14px'
         }}>

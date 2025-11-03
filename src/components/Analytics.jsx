@@ -181,7 +181,7 @@ function Analytics() {
   if (adminLoading) {
     return (
       <div className="analytics-loading">
-        <h2>📊 Analytics Dashboard</h2>
+        <h2>Analytics Dashboard</h2>
         <p>Checking permissions...</p>
       </div>
     );
@@ -217,7 +217,7 @@ function Analytics() {
   if (loading) {
     return (
       <div className="analytics-loading">
-        <h2>📊 Analytics Dashboard</h2>
+        <h2>Analytics Dashboard</h2>
         <p>Loading analytics data...</p>
       </div>
     );
@@ -232,7 +232,7 @@ function Analytics() {
   return (
     <div className="analytics-dashboard">
       <div className="analytics-header">
-        <h1>📊 Flink Analytics</h1>
+        <h1>Flink Analytics</h1>
         <div className="time-selector">
           <select 
             value={timeRange} 
@@ -251,7 +251,7 @@ function Analytics() {
           title="User Activity Over Time"
           value={stats.weeklyPosts}
           subtitle="7 DAYS"
-          icon="📈"
+          icon=""
           color="#4CAF50"
         />
         
@@ -259,7 +259,7 @@ function Analytics() {
           title="Active Users in Last 30 Minutes"
           value={stats.activeUsers}
           subtitle="ACTIVE USERS PER MINUTE"
-          icon="👥"
+          icon=""
           color="#2196F3"
         />
         
@@ -267,7 +267,7 @@ function Analytics() {
           title="Total Posts"
           value={stats.totalPosts}
           subtitle="All time posts"
-          icon="📝"
+          icon=""
           color="#FF9800"
         />
         
@@ -275,7 +275,7 @@ function Analytics() {
           title="Total Users"
           value={stats.totalUsers}
           subtitle="Registered users"
-          icon="🌟"
+          icon=""
           color="#9C27B0"
         />
       </div>
@@ -304,12 +304,12 @@ function Analytics() {
 
       <div className="realtime-section">
         <div className="realtime-header">
-          <h4>📡 Realtime Activity</h4>
+          <h4>Realtime Activity</h4>
           <button 
             onClick={fetchAnalytics}
             className="refresh-btn"
           >
-            🔄 Refresh
+            Refresh
           </button>
         </div>
         <div className="realtime-stats">

@@ -26,7 +26,7 @@ function VideoCall() {
       onMouseOut={(e) => e.target.style.background = '#4CAF50'}
       title="Start Video Call"
     >
-      📹 Video Call
+       Video Call
     </button>
   );
 }

@@ -1,6 +1,6 @@
 const socket = io();
 
-// ดึง Element จาก HTML
+// Get elements from HTML
 const startButton = document.getElementById('startButton');
 const callButton = document.getElementById('callButton');
 const hangupButton = document.getElementById('hangupButton');
@@ -13,21 +13,21 @@ const declineButton = document.getElementById('declineButton');
 let localStream;
 let peerConnection;
 let receivedOffer;
-//  "ถังพัก" สำหรับเก็บ Candidate ที่อาจจะมาก่อนเวลา
+// "Holding bucket" to store ICE candidates that may arrive early
 let iceCandidateQueue = [];
 
 const stunServers = {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 };
 
-// --- จัดการ Event Listener ---
+// --- Event listeners ---
 startButton.addEventListener('click', start);
 callButton.addEventListener('click', call);
 hangupButton.addEventListener('click', hangup);
 acceptButton.addEventListener('click', acceptCall);
 declineButton.addEventListener('click', declineCall);
 
-// --- ฟังก์ชันหลัก ---
+// --- Main functions ---
 
 async function start() {
     try {
@@ -64,7 +64,7 @@ function hangup() {
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
     }
-    iceCandidateQueue = []; // เคลียร์ถังพักเมื่อวางสาย
+    iceCandidateQueue = []; // Clear the candidate queue when hanging up
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
     startButton.disabled = false;
@@ -103,7 +103,7 @@ async function acceptCall() {
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
 
-        //  เมื่อตั้งค่าทุกอย่างพร้อมแล้ว ค่อยประมวลผล Candidate ที่ค้างอยู่
+    // Once everything is set up, process any queued ICE candidates
         await processIceQueue();
         
         socket.emit('answer', answer);
@@ -120,10 +120,10 @@ function declineCall() {
     incomingCallDiv.classList.add('hidden');
 }
 
-//  ฟังก์ชันใหม่สำหรับประมวลผล Candidate ในถังพัก
+// New function to process queued ICE candidates
 async function processIceQueue() {
     while (iceCandidateQueue.length > 0) {
-        const candidate = iceCandidateQueue.shift(); // ดึงอันแรกออก
+        const candidate = iceCandidateQueue.shift(); // Remove the first one
         try {
             await peerConnection.addIceCandidate(candidate);
         } catch (error) {
@@ -132,7 +132,7 @@ async function processIceQueue() {
     }
 }
 
-// --- การทำงานเมื่อได้รับสัญญาณจาก Server ---
+// --- Handling signals from the server ---
 
 socket.on('offer', (offer) => {
     if (!peerConnection) { 
@@ -145,7 +145,7 @@ socket.on('answer', async (answer) => {
     if (peerConnection) {
         try {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-            //  เมื่อผู้โทรได้รับ Answer และพร้อมแล้ว ก็ให้ประมวลผล Candidate ที่ค้างอยู่เช่นกัน
+            // When caller receives the answer and is ready, process any queued ICE candidates as well
             await processIceQueue();
         } catch (error) {
             console.error("CALLER: Failed to set remote description:", error);
@@ -155,8 +155,8 @@ socket.on('answer', async (answer) => {
 
 socket.on('candidate', (candidate) => {
     const iceCandidate = new RTCIceCandidate(candidate);
-    //  ถ้า peerConnection พร้อมและรู้ว่าจะคุยกับใคร (มี remoteDescription) ก็ให้เพิ่ม Candidate ทันที
-    //  ถ้าไม่พร้อม ให้เก็บลง "ถังพัก" ไปก่อน
+    // If peerConnection is ready and has a remoteDescription, add the candidate immediately
+    // Otherwise, store it in the queue to be processed later
     if (peerConnection && peerConnection.remoteDescription) {
         peerConnection.addIceCandidate(iceCandidate)
             .catch(error => console.error("Error adding received ICE candidate", error));
